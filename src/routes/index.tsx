@@ -54,6 +54,10 @@ const Routes = (): React.ReactElement => {
     }
   }, [location, matchSafeWithAction, trackPage])
 
+  const baseRouteSlugs = {
+    networkName: getNetworkNameSlug(),
+  }
+
   return (
     <Switch>
       <Route
@@ -61,7 +65,7 @@ const Routes = (): React.ReactElement => {
         path="/"
         render={() => {
           if (!isInitialLoad) {
-            return <Redirect to={WELCOME_ROUTE} />
+            return <Redirect to={generatePath(WELCOME_ROUTE, baseRouteSlugs)} />
           }
 
           if (defaultSafe === null) {
@@ -76,14 +80,14 @@ const Routes = (): React.ReactElement => {
             return (
               <Redirect
                 to={generatePath(SAFE_ROUTES.ASSETS_BALANCES, {
-                  networkName: getNetworkNameSlug(),
+                  ...baseRouteSlugs,
                   safeAddress: defaultSafe,
                 })}
               />
             )
           }
 
-          return <Redirect to={WELCOME_ROUTE} />
+          return <Redirect to={generatePath(WELCOME_ROUTE, baseRouteSlugs)} />
         }}
       />
       <Route component={Welcome} exact path={WELCOME_ROUTE} />

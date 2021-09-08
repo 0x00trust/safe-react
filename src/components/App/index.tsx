@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { SnackbarProvider } from 'notistack'
 import { useSelector } from 'react-redux'
-import { useRouteMatch, useHistory } from 'react-router-dom'
+import { useRouteMatch, useHistory, generatePath } from 'react-router-dom'
 import styled from 'styled-components'
 
 import AlertIcon from 'src/assets/icons/alert.svg'
@@ -16,7 +16,7 @@ import CookiesBanner from 'src/components/CookiesBanner'
 import Notifier from 'src/components/Notifier'
 import Backdrop from 'src/components/layout/Backdrop'
 import Img from 'src/components/layout/Img'
-import { getNetworkId } from 'src/config'
+import { getNetworkId, getLowercaseNetworkName } from 'src/config'
 import { ETHEREUM_NETWORK } from 'src/config/networks/network.d'
 import { networkSelector } from 'src/logic/wallets/store/selectors'
 import { SAFELIST_ROUTE, WELCOME_ROUTE } from 'src/routes/routes'
@@ -90,7 +90,7 @@ const App: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (matchSafe?.isExact) {
-      history.push(WELCOME_ROUTE)
+      history.push(generatePath(WELCOME_ROUTE, { networkName: getLowercaseNetworkName() }))
       return
     }
   }, [matchSafe, history])

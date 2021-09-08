@@ -16,8 +16,9 @@ import { currentSafeWithNames } from 'src/logic/safe/store/selectors'
 import { WELCOME_ROUTE } from 'src/routes/routes'
 import removeSafe from 'src/logic/safe/store/actions/removeSafe'
 
-import { getExplorerInfo } from 'src/config'
+import { getExplorerInfo, getLowercaseNetworkName } from 'src/config'
 import Col from 'src/components/layout/Col'
+import { generatePath } from 'react-router'
 
 type RemoveSafeModalProps = {
   isOpen: boolean
@@ -33,9 +34,7 @@ const RemoveSafeModal = ({ isOpen, onClose }: RemoveSafeModalProps): React.React
     dispatch(removeSafe(safeAddress))
 
     onClose()
-    history.push({
-      pathname: `${WELCOME_ROUTE}`,
-    })
+    history.push(generatePath(WELCOME_ROUTE, { networkName: getLowercaseNetworkName() }))
   }
 
   return (

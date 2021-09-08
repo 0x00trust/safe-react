@@ -114,6 +114,8 @@ export const createSafe = async (values: CreateSafeValues, userAccount: string):
   })
 }
 
+const baseRouteSlugs = { networkName: getLowercaseNetworkName() }
+
 const Open = (): ReactElement => {
   const [loading, setLoading] = useState(false)
   const [showProgress, setShowProgress] = useState(false)
@@ -211,7 +213,7 @@ const Open = (): ReactElement => {
     await removeFromStorage(SAFE_PENDING_CREATION_STORAGE_KEY)
     const url = {
       pathname: generatePath(SAFE_ROUTES.ASSETS_BALANCES, {
-        networkName: getLowercaseNetworkName(),
+        ...baseRouteSlugs,
         safeAddress: safeProps.address,
       }),
       state: {
@@ -225,9 +227,7 @@ const Open = (): ReactElement => {
 
   const onCancel = () => {
     removeFromStorage(SAFE_PENDING_CREATION_STORAGE_KEY)
-    history.push({
-      pathname: `${WELCOME_ROUTE}`,
-    })
+    history.push(generatePath(WELCOME_ROUTE, baseRouteSlugs))
   }
 
   const onRetry = async () => {

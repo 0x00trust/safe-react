@@ -5,10 +5,9 @@ import { generatePath, Redirect, Route, Switch } from 'react-router-dom'
 
 import { currentSafeFeaturesEnabled, currentSafeOwners, safeAddressFromUrl } from 'src/logic/safe/store/selectors'
 import { wrapInSuspense } from 'src/utils/wrapInSuspense'
-import { SAFE_ROUTES } from 'src/routes/routes'
+import { getNetworkNameSlug, SAFE_ROUTES } from 'src/routes/routes'
 import { FEATURES } from 'src/config/networks/network.d'
 import { LoadingContainer } from 'src/components/LoaderContainer'
-import { getLowercaseNetworkName } from 'src/config'
 
 export const BALANCES_TAB_BTN_TEST_ID = 'balances-tab-btn'
 export const SETTINGS_TAB_BTN_TEST_ID = 'settings-tab-btn'
@@ -47,7 +46,7 @@ const Container = (): React.ReactElement => {
   }
 
   const baseRouteSlugs = {
-    networkName: getLowercaseNetworkName(),
+    networkName: getNetworkNameSlug(),
     safeAddress,
   }
   const balancesBaseRoute = generatePath(SAFE_ROUTES.ASSETS_BASE_ROUTE, baseRouteSlugs)

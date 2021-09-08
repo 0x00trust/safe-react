@@ -16,10 +16,10 @@ import CookiesBanner from 'src/components/CookiesBanner'
 import Notifier from 'src/components/Notifier'
 import Backdrop from 'src/components/layout/Backdrop'
 import Img from 'src/components/layout/Img'
-import { getNetworkId, getLowercaseNetworkName } from 'src/config'
+import { getNetworkId } from 'src/config'
 import { ETHEREUM_NETWORK } from 'src/config/networks/network.d'
 import { networkSelector } from 'src/logic/wallets/store/selectors'
-import { SAFELIST_ROUTE, WELCOME_ROUTE } from 'src/routes/routes'
+import { getNetworkNameSlug, SAFELIST_ROUTE, WELCOME_ROUTE } from 'src/routes/routes'
 import { currentSafeWithNames, safeAddressFromUrl } from 'src/logic/safe/store/selectors'
 import { currentCurrencySelector } from 'src/logic/currencyValues/store/selectors'
 import Modal from 'src/components/Modal'
@@ -90,7 +90,7 @@ const App: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (matchSafe?.isExact) {
-      history.push(generatePath(WELCOME_ROUTE, { networkName: getLowercaseNetworkName() }))
+      history.push(generatePath(WELCOME_ROUTE, { networkName: getNetworkNameSlug() }))
       return
     }
   }, [matchSafe, history])

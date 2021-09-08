@@ -7,14 +7,13 @@ import Col from 'src/components/layout/Col'
 import Modal from 'src/components/Modal'
 import ReceiveModal from 'src/components/App/ReceiveModal'
 
-import { SAFE_ROUTES, SAFELIST_ROUTE } from 'src/routes/routes'
+import { SAFE_ROUTES, SAFELIST_ROUTE, getNetworkNameSlug } from 'src/routes/routes'
 import SendModal from 'src/routes/safe/components/Balances/SendModal'
 import { CurrencyDropdown } from 'src/routes/safe/components/CurrencyDropdown'
 import { currentSafeWithNames } from 'src/logic/safe/store/selectors'
 
 import { wrapInSuspense } from 'src/utils/wrapInSuspense'
 import { FEATURES } from 'src/config/networks/network.d'
-import { getLowercaseNetworkName } from 'src/config'
 
 const Collectibles = React.lazy(() => import('src/routes/safe/components/Balances/Collectibles'))
 const Coins = React.lazy(() => import('src/routes/safe/components/Balances/Coins'))
@@ -86,7 +85,7 @@ const Balances = (): ReactElement => {
   const { erc721Enabled, sendFunds, showReceive } = state
 
   const baseRouteSlugs = {
-    networkName: getLowercaseNetworkName(),
+    networkName: getNetworkNameSlug(),
     safeAddress,
   }
 

@@ -19,7 +19,7 @@ import { currentSafeCurrentVersion } from 'src/logic/safe/store/selectors'
 import { ZERO_ADDRESS } from 'src/logic/wallets/ethAddresses'
 import { EMPTY_DATA } from 'src/logic/wallets/ethTransactions'
 import { providerSelector } from 'src/logic/wallets/store/selectors'
-import { SAFE_ROUTES } from 'src/routes/routes'
+import { getNetworkNameSlug, SAFE_ROUTES } from 'src/routes/routes'
 import enqueueSnackbar from 'src/logic/notifications/store/actions/enqueueSnackbar'
 import closeSnackbarAction from 'src/logic/notifications/store/actions/closeSnackbar'
 import { generateSafeTxHash } from 'src/logic/safe/store/actions/transactions/utils/transactionHelpers'
@@ -34,7 +34,6 @@ import { checkIfOffChainSignatureIsPossible, getPreValidatedSignatures } from 's
 import { TxParameters } from 'src/routes/safe/container/hooks/useTransactionParameters'
 import { isTxPendingError } from 'src/logic/wallets/getWeb3'
 import { Errors, logError } from 'src/logic/exceptions/CodedException'
-import { getLowercaseNetworkName } from 'src/config'
 
 export interface CreateTransactionArgs {
   navigateToTransactionsTab?: boolean
@@ -85,7 +84,7 @@ export const createTransaction =
       dispatch(
         push(
           generatePath(SAFE_ROUTES.TRANSACTIONS, {
-            networkName: getLowercaseNetworkName(),
+            networkName: getNetworkNameSlug(),
             safeAddress,
           }),
         ),

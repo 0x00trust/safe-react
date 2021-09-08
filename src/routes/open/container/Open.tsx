@@ -19,7 +19,7 @@ import {
   getSafeNameFrom,
   getThresholdFrom,
 } from 'src/routes/open/utils/safeDataExtractor'
-import { SAFE_ROUTES, WELCOME_ROUTE } from 'src/routes/routes'
+import { getNetworkNameSlug, SAFE_ROUTES, WELCOME_ROUTE } from 'src/routes/routes'
 import { buildSafe } from 'src/logic/safe/store/actions/fetchSafe'
 import { history } from 'src/store'
 import { loadFromStorage, removeFromStorage, saveToStorage } from 'src/utils/storage'
@@ -30,7 +30,6 @@ import { addOrUpdateSafe } from 'src/logic/safe/store/actions/addOrUpdateSafe'
 import { useAnalytics } from 'src/utils/googleAnalytics'
 import { sleep } from 'src/utils/timer'
 import { txMonitor } from 'src/logic/safe/transactions/txMonitor'
-import { getLowercaseNetworkName } from 'src/config'
 
 const SAFE_PENDING_CREATION_STORAGE_KEY = 'SAFE_PENDING_CREATION_STORAGE_KEY'
 
@@ -114,7 +113,7 @@ export const createSafe = async (values: CreateSafeValues, userAccount: string):
   })
 }
 
-const baseRouteSlugs = { networkName: getLowercaseNetworkName() }
+const baseRouteSlugs = { networkName: getNetworkNameSlug() }
 
 const Open = (): ReactElement => {
   const [loading, setLoading] = useState(false)

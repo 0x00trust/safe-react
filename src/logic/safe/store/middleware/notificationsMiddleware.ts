@@ -22,8 +22,7 @@ import { isTransactionSummary } from 'src/logic/safe/store/models/types/gateway.
 import { TransactionListItem, Transaction, TransactionSummary } from '@gnosis.pm/safe-react-gateway-sdk'
 import { loadFromStorage, saveToStorage } from 'src/utils/storage'
 import { ADD_OR_UPDATE_SAFE } from '../actions/addOrUpdateSafe'
-import { SAFE_ROUTES } from 'src/routes/routes'
-import { getLowercaseNetworkName } from 'src/config'
+import { getNetworkNameSlug, SAFE_ROUTES } from 'src/routes/routes'
 
 const watchedActions = [ADD_OR_UPDATE_SAFE, ADD_QUEUED_TRANSACTIONS, ADD_HISTORY_TRANSACTIONS]
 
@@ -72,7 +71,7 @@ const onNotificationClicked = (dispatch, notificationKey, safeAddress) => () => 
   dispatch(
     push(
       generatePath(SAFE_ROUTES.TRANSACTIONS, {
-        networkName: getLowercaseNetworkName(),
+        networkName: getNetworkNameSlug(),
         safeAddress,
       }),
     ),

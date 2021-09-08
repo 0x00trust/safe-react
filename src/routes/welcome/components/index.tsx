@@ -14,11 +14,10 @@ import {
 
 import Link from 'src/components/layout/Link'
 import Block from 'src/components/layout/Block'
-import { LOAD_ROUTE, OPEN_ROUTE } from 'src/routes/routes'
+import { getNetworkNameSlug, LOAD_ROUTE, OPEN_ROUTE } from 'src/routes/routes'
 import { onConnectButtonClick } from 'src/components/ConnectButton'
 import { useSelector } from 'react-redux'
 import { providerNameSelector } from 'src/logic/wallets/store/selectors'
-import { getLowercaseNetworkName } from 'src/config'
 import { generatePath } from 'react-router'
 
 const Wrapper = styled.div`
@@ -77,7 +76,7 @@ export const WelcomeLayout = ({ isOldMultisigMigration }: Props): React.ReactEle
   const provider = useSelector(providerNameSelector)
 
   const baseRouteSlugs = {
-    networkName: getLowercaseNetworkName(),
+    networkName: getNetworkNameSlug(),
   }
   return (
     <Block>

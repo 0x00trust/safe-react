@@ -13,10 +13,10 @@ import Hairline from 'src/components/layout/Hairline'
 import Paragraph from 'src/components/layout/Paragraph'
 import Row from 'src/components/layout/Row'
 import { currentSafeWithNames } from 'src/logic/safe/store/selectors'
-import { WELCOME_ROUTE } from 'src/routes/routes'
+import { getNetworkNameSlug, WELCOME_ROUTE } from 'src/routes/routes'
 import removeSafe from 'src/logic/safe/store/actions/removeSafe'
 
-import { getExplorerInfo, getLowercaseNetworkName } from 'src/config'
+import { getExplorerInfo } from 'src/config'
 import Col from 'src/components/layout/Col'
 import { generatePath } from 'react-router'
 
@@ -34,7 +34,7 @@ const RemoveSafeModal = ({ isOpen, onClose }: RemoveSafeModalProps): React.React
     dispatch(removeSafe(safeAddress))
 
     onClose()
-    history.push(generatePath(WELCOME_ROUTE, { networkName: getLowercaseNetworkName() }))
+    history.push(generatePath(WELCOME_ROUTE, { networkName: getNetworkNameSlug() }))
   }
 
   return (

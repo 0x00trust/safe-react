@@ -10,12 +10,11 @@ import { Modal } from 'src/components/Modal'
 import { safeAddressFromUrl } from 'src/logic/safe/store/selectors'
 import AppCard from 'src/routes/safe/components/Apps/components/AppCard'
 import AddAppIcon from 'src/routes/safe/components/Apps/assets/addApp.svg'
-import { SAFE_ROUTES } from 'src/routes/routes'
+import { getNetworkNameSlug, SAFE_ROUTES } from 'src/routes/routes'
 
 import { useAppList } from '../hooks/useAppList'
 import { SAFE_APP_FETCH_STATUS, SafeApp } from '../types'
 import AddAppForm from './AddAppForm'
-import { getLowercaseNetworkName } from 'src/config'
 
 const Wrapper = styled.div`
   height: 100%;
@@ -86,7 +85,7 @@ const isCustomApp = (appUrl: string, appsList: SafeApp[]) => {
 const AppsList = (): React.ReactElement => {
   const safeAddress = useSelector(safeAddressFromUrl)
   const appsPath = generatePath(SAFE_ROUTES.APPS, {
-    networkName: getLowercaseNetworkName(),
+    networkName: getNetworkNameSlug(),
     safeAddress,
   })
   const { appList, removeApp, isLoading } = useAppList()

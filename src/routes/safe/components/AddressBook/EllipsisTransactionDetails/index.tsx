@@ -11,11 +11,10 @@ import { generatePath } from 'react-router-dom'
 import { sameString } from 'src/utils/strings'
 import { ADDRESS_BOOK_DEFAULT_NAME } from 'src/logic/addressBook/model/addressBook'
 import { addressBookEntryName } from 'src/logic/addressBook/store/selectors'
-import { SAFE_ROUTES } from 'src/routes/routes'
+import { getNetworkNameSlug, SAFE_ROUTES } from 'src/routes/routes'
 import { safeAddressFromUrl } from 'src/logic/safe/store/selectors'
 import { xs } from 'src/theme/variables'
 import { grantedSelector } from 'src/routes/safe/container/selector'
-import { getLowercaseNetworkName } from 'src/config'
 
 const useStyles = makeStyles(
   createStyles({
@@ -64,7 +63,7 @@ export const EllipsisTransactionDetails = ({
 
   const addOrEditEntryHandler = () => {
     const addressBookPath = generatePath(SAFE_ROUTES.ADDRESS_BOOK, {
-      networkName: getLowercaseNetworkName(),
+      networkName: getNetworkNameSlug(),
       safeAddress: currentSafeAddress,
     })
 

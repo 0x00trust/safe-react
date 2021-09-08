@@ -1,3 +1,7 @@
+import { getNetworkName } from 'src/config'
+
+export const getNetworkNameSlug = (): string => getNetworkName().toLowerCase()
+
 export const SAFE_ADDRESS_SLUG = 'address'
 export const SAFE_NETWORK_NAME_SLUG = 'networkName'
 export const SAFE_SAFE_ADDRESS_SLUG = 'safeAddress'

@@ -5,9 +5,8 @@ import styled from 'styled-components'
 import { EthHashInfo, Text } from '@gnosis.pm/safe-react-components'
 
 import Link from 'src/components/layout/Link'
-import { SAFE_ROUTES, LOAD_ROUTE } from 'src/routes/routes'
+import { SAFE_ROUTES, LOAD_ROUTE, getNetworkNameSlug } from 'src/routes/routes'
 import { addressBookName } from 'src/logic/addressBook/store/selectors'
-import { getLowercaseNetworkName } from 'src/config'
 
 const Wrapper = styled.div`
   display: flex;
@@ -38,7 +37,7 @@ export const OwnedAddress = ({ address, isAdded, onClick, children }: Props): Re
   const name = useSelector((state) => addressBookName(state, { address }))
 
   const baseRouteSlugs = {
-    networkName: getLowercaseNetworkName(),
+    networkName: getNetworkNameSlug(),
     safeAddress: address,
   }
 

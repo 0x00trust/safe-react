@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { generatePath, Redirect, Route, Switch, useLocation, useRouteMatch } from 'react-router-dom'
 
 import {
+  getNetworkNameSlug,
   LOAD_ROUTE,
   OPEN_ROUTE,
   SAFELIST_ROUTE,
@@ -15,7 +16,6 @@ import {
 import { LoadingContainer } from 'src/components/LoaderContainer'
 import { useAnalytics } from 'src/utils/googleAnalytics'
 import { lastViewedSafe } from 'src/logic/currentSession/store/selectors'
-import { getLowercaseNetworkName } from 'src/config'
 
 const Welcome = React.lazy(() => import('./welcome/container'))
 const Open = React.lazy(() => import('./open/container/Open'))
@@ -76,7 +76,7 @@ const Routes = (): React.ReactElement => {
             return (
               <Redirect
                 to={generatePath(SAFE_ROUTES.ASSETS_BALANCES, {
-                  networkName: getLowercaseNetworkName(),
+                  networkName: getNetworkNameSlug(),
                   safeAddress: defaultSafe,
                 })}
               />

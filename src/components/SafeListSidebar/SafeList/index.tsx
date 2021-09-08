@@ -10,12 +10,11 @@ import Hairline from 'src/components/layout/Hairline'
 import Link from 'src/components/layout/Link'
 import Collapse from 'src/components/Collapse'
 import { sameAddress } from 'src/logic/wallets/ethAddresses'
-import { SAFE_ROUTES } from 'src/routes/routes'
+import { getNetworkNameSlug, SAFE_ROUTES } from 'src/routes/routes'
 import { AddressWrapper } from 'src/components/SafeListSidebar/SafeList/AddressWrapper'
 import { OwnedAddress } from 'src/components/SafeListSidebar/SafeList/OwnedAddress'
 import { SafeRecordWithNames } from 'src/logic/safe/store/selectors'
 import { background } from 'src/theme/variables'
-import { getLowercaseNetworkName } from 'src/config'
 
 export const SIDEBAR_SAFELIST_ROW_TESTID = 'SIDEBAR_SAFELIST_ROW_TESTID'
 
@@ -84,7 +83,7 @@ export const SafeList = ({ currentSafeAddress, onSafeClick, safes, ownedSafes }:
             data-testid={SIDEBAR_SAFELIST_ROW_TESTID}
             onClick={onSafeClick}
             to={generatePath(SAFE_ROUTES.ASSETS_BALANCES, {
-              networkName: getLowercaseNetworkName(),
+              networkName: getNetworkNameSlug(),
               safeAddress: safe.address,
             })}
           >

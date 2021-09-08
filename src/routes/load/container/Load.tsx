@@ -15,7 +15,7 @@ import {
 import Page from 'src/components/layout/Page'
 import { saveSafes, loadStoredSafes } from 'src/logic/safe/utils'
 import { getAccountsFrom, getNamesFrom } from 'src/routes/open/utils/safeDataExtractor'
-import { SAFE_ROUTES } from 'src/routes/routes'
+import { getNetworkNameSlug, SAFE_ROUTES } from 'src/routes/routes'
 import { buildSafe } from 'src/logic/safe/store/actions/fetchSafe'
 import { history } from 'src/store'
 import { SafeRecordProps } from 'src/logic/safe/store/models/safe'
@@ -23,7 +23,6 @@ import { checksumAddress } from 'src/utils/checksumAddress'
 import { isValidAddress } from 'src/utils/isValidAddress'
 import { providerNameSelector, userAccountSelector } from 'src/logic/wallets/store/selectors'
 import { addOrUpdateSafe } from 'src/logic/safe/store/actions/addOrUpdateSafe'
-import { getLowercaseNetworkName } from 'src/config'
 
 export const loadSafe = async (safeAddress: string, addSafe: (safe: SafeRecordProps) => void): Promise<void> => {
   const safeProps = await buildSafe(safeAddress)
@@ -98,7 +97,7 @@ const Load = (): ReactElement => {
 
       history.push(
         generatePath(SAFE_ROUTES.ASSETS_BALANCES, {
-          networkName: getLowercaseNetworkName(),
+          networkName: getNetworkNameSlug(),
           safeAddress,
         }),
       )

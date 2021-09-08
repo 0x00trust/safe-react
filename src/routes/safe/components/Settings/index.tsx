@@ -7,14 +7,13 @@ import { generatePath, Route, Switch, useRouteMatch } from 'react-router-dom'
 
 import { styles } from './style'
 
-import { SAFE_ROUTES, SAFELIST_ROUTE } from 'src/routes/routes'
+import { SAFE_ROUTES, SAFELIST_ROUTE, getNetworkNameSlug } from 'src/routes/routes'
 import Block from 'src/components/layout/Block'
 import ButtonLink from 'src/components/layout/ButtonLink'
 import Col from 'src/components/layout/Col'
 import Span from 'src/components/layout/Span'
 import { currentSafeWithNames } from 'src/logic/safe/store/selectors'
 import { grantedSelector } from 'src/routes/safe/container/selector'
-import { getLowercaseNetworkName } from 'src/config'
 
 const Advanced = React.lazy(() => import('./Advanced'))
 const SpendingLimitSettings = React.lazy(() => import('./SpendingLimit'))
@@ -44,7 +43,7 @@ const Settings = (): React.ReactElement => {
   }
 
   const baseRouteSlugs = {
-    networkName: getLowercaseNetworkName(),
+    networkName: getNetworkNameSlug(),
     safeAddress,
   }
 

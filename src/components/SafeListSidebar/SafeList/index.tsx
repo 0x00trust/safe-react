@@ -15,6 +15,7 @@ import { AddressWrapper } from 'src/components/SafeListSidebar/SafeList/AddressW
 import { OwnedAddress } from 'src/components/SafeListSidebar/SafeList/OwnedAddress'
 import { SafeRecordWithNames } from 'src/logic/safe/store/selectors'
 import { background } from 'src/theme/variables'
+import { getLowercaseNetworkName } from 'src/config'
 
 export const SIDEBAR_SAFELIST_ROW_TESTID = 'SIDEBAR_SAFELIST_ROW_TESTID'
 
@@ -83,6 +84,7 @@ export const SafeList = ({ currentSafeAddress, onSafeClick, safes, ownedSafes }:
             data-testid={SIDEBAR_SAFELIST_ROW_TESTID}
             onClick={onSafeClick}
             to={generatePath(SAFE_ROUTES.ASSETS_BALANCES, {
+              networkName: getLowercaseNetworkName(),
               safeAddress: safe.address,
             })}
           >

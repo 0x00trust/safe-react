@@ -1,6 +1,6 @@
 import { Map } from 'immutable'
 import { connectRouter, routerMiddleware, RouterState } from 'connected-react-router'
-import { createHashHistory } from 'history'
+import { createBrowserHistory } from 'history'
 import { applyMiddleware, combineReducers, compose, createStore, CombinedState, PreloadedState, Store } from 'redux'
 import { save, load } from 'redux-localstorage-simple'
 import thunk from 'redux-thunk'
@@ -38,7 +38,7 @@ import currencyValues, {
 } from 'src/logic/currencyValues/store/reducer/currencyValues'
 import { currencyValuesStorageMiddleware } from 'src/logic/currencyValues/store/middleware/currencyValuesStorageMiddleware'
 
-export const history = createHashHistory()
+export const history = createBrowserHistory()
 
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 

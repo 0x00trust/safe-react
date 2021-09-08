@@ -30,6 +30,8 @@ export const getNetworkName = (): string => {
   return name || ''
 }
 
+export const getLowercaseNetworkName = (): string => getNetworkName().toLocaleLowerCase()
+
 export const getNetworkConfigById = (id: ETHEREUM_NETWORK): NetworkConfig | undefined => {
   return Object.values(networks).find((cfg) => cfg.network.id === id)
 }

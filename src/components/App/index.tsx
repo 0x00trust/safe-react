@@ -19,7 +19,7 @@ import Img from 'src/components/layout/Img'
 import { getNetworkId } from 'src/config'
 import { ETHEREUM_NETWORK } from 'src/config/networks/network.d'
 import { networkSelector } from 'src/logic/wallets/store/selectors'
-import { SAFELIST_ADDRESS, WELCOME_ADDRESS } from 'src/routes/routes'
+import { SAFELIST_ROUTE, WELCOME_ROUTE } from 'src/routes/routes'
 import { currentSafeWithNames, safeAddressFromUrl } from 'src/logic/safe/store/selectors'
 import { currentCurrencySelector } from 'src/logic/currencyValues/store/selectors'
 import Modal from 'src/components/Modal'
@@ -65,7 +65,7 @@ const App: React.FC = ({ children }) => {
   const currentNetwork = useSelector(networkSelector)
   const isWrongNetwork = currentNetwork !== ETHEREUM_NETWORK.UNKNOWN && currentNetwork !== desiredNetwork
   const { toggleSidebar } = useContext(SafeListSidebarContext)
-  const matchSafe = useRouteMatch({ path: `${SAFELIST_ADDRESS}`, strict: false })
+  const matchSafe = useRouteMatch({ path: `${SAFELIST_ROUTE}`, strict: false })
   const history = useHistory()
   const {
     address: safeAddress,
@@ -90,7 +90,7 @@ const App: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (matchSafe?.isExact) {
-      history.push(WELCOME_ADDRESS)
+      history.push(WELCOME_ROUTE)
       return
     }
   }, [matchSafe, history])

@@ -6,7 +6,7 @@ import { AddressBookEntry, makeAddressBookEntry } from 'src/logic/addressBook/mo
 import { currentNetworkAddressBookAsMap } from 'src/logic/addressBook/store/selectors'
 import makeSafe, { SafeRecord, SafeRecordProps } from 'src/logic/safe/store/models/safe'
 import { SAFE_REDUCER_ID } from 'src/logic/safe/store/reducer/safe'
-import { SAFELIST_ADDRESS } from 'src/routes/routes'
+import { SAFELIST_ROUTE } from 'src/routes/routes'
 import { SafesMap } from 'src/logic/safe/store/reducer/types/safe'
 import { AppReduxState } from 'src/store'
 import { checksumAddress } from 'src/utils/checksumAddress'
@@ -24,7 +24,7 @@ export const latestMasterContractVersion = createSelector(safesState, (safeState
 
 export const safeAddressFromUrl = (state: AppReduxState): string => {
   const match = matchPath<{ safeAddress: string }>(state.router.location.pathname, {
-    path: `${SAFELIST_ADDRESS}/:safeAddress`,
+    path: `${SAFELIST_ROUTE}/:safeAddress`,
   })
 
   if (match) {

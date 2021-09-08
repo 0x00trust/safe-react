@@ -17,6 +17,7 @@ import { loadFromStorage, saveToStorage } from 'src/utils/storage'
 import { SAFE_ROUTES } from 'src/routes/routes'
 import { Errors, logError } from 'src/logic/exceptions/CodedException'
 import { safeAddressFromUrl } from 'src/logic/safe/store/selectors'
+import { getLowercaseNetworkName } from 'src/config'
 
 const FORM_ID = 'add-apps-form'
 
@@ -82,6 +83,7 @@ interface AddAppProps {
 const AddApp = ({ appList, closeModal }: AddAppProps): ReactElement => {
   const safeAddress = useSelector(safeAddressFromUrl)
   const appsPath = generatePath(SAFE_ROUTES.APPS, {
+    networkName: getLowercaseNetworkName(),
     safeAddress,
   })
   const [appInfo, setAppInfo] = useState<SafeApp>(DEFAULT_APP_INFO)

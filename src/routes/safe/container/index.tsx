@@ -8,6 +8,7 @@ import { wrapInSuspense } from 'src/utils/wrapInSuspense'
 import { SAFE_ROUTES } from 'src/routes/routes'
 import { FEATURES } from 'src/config/networks/network.d'
 import { LoadingContainer } from 'src/components/LoaderContainer'
+import { getLowercaseNetworkName } from 'src/config'
 
 export const BALANCES_TAB_BTN_TEST_ID = 'balances-tab-btn'
 export const SETTINGS_TAB_BTN_TEST_ID = 'settings-tab-btn'
@@ -45,12 +46,12 @@ const Container = (): React.ReactElement => {
     )
   }
 
-  const balancesBaseRoute = generatePath(SAFE_ROUTES.ASSETS_BASE_ROUTE, {
+  const baseRouteSlugs = {
+    networkName: getLowercaseNetworkName(),
     safeAddress,
-  })
-  const settingsBaseRoute = generatePath(SAFE_ROUTES.SETTINGS_BASE_ROUTE, {
-    safeAddress,
-  })
+  }
+  const balancesBaseRoute = generatePath(SAFE_ROUTES.ASSETS_BASE_ROUTE, baseRouteSlugs)
+  const settingsBaseRoute = generatePath(SAFE_ROUTES.SETTINGS_BASE_ROUTE, baseRouteSlugs)
 
   const closeGenericModal = () => {
     if (modal.onClose) {
@@ -72,23 +73,15 @@ const Container = (): React.ReactElement => {
         <Route exact path={`${balancesBaseRoute}/:assetType?`} render={() => wrapInSuspense(<Balances />, null)} />
         <Route
           exact
-          path={generatePath(SAFE_ROUTES.TRANSACTIONS, {
-            safeAddress,
-          })}
+          path={generatePath(SAFE_ROUTES.TRANSACTIONS, baseRouteSlugs)}
           render={() => wrapInSuspense(<TxList />, null)}
         />
         <Route
           exact
-          path={generatePath(SAFE_ROUTES.APPS, {
-            safeAddress,
-          })}
+          path={generatePath(SAFE_ROUTES.APPS, baseRouteSlugs)}
           render={({ history }) => {
             if (!featuresEnabled.includes(FEATURES.SAFE_APPS)) {
-              history.push(
-                generatePath(SAFE_ROUTES.ASSETS_BALANCES, {
-                  safeAddress,
-                }),
-              )
+              history.push(generatePath(SAFE_ROUTES.ASSETS_BALANCES, baseRouteSlugs))
             }
             return wrapInSuspense(<Apps />, null)
           }}
@@ -96,16 +89,10 @@ const Container = (): React.ReactElement => {
         <Route exact path={`${settingsBaseRoute}/:section`} render={() => wrapInSuspense(<Settings />, null)} />
         <Route
           exact
-          path={generatePath(SAFE_ROUTES.ADDRESS_BOOK, {
-            safeAddress,
-          })}
+          path={generatePath(SAFE_ROUTES.ADDRESS_BOOK, baseRouteSlugs)}
           render={() => wrapInSuspense(<AddressBookTable />, null)}
         />
-        <Redirect
-          to={generatePath(SAFE_ROUTES.ASSETS_BALANCES, {
-            safeAddress,
-          })}
-        />
+        <Redirect to={generatePath(SAFE_ROUTES.ASSETS_BALANCES, baseRouteSlugs)} />
       </Switch>
       {modal.isOpen && <GenericModal {...modal} onClose={closeGenericModal} />}
     </>

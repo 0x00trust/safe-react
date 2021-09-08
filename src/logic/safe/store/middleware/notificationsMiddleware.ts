@@ -23,6 +23,7 @@ import { TransactionListItem, Transaction, TransactionSummary } from '@gnosis.pm
 import { loadFromStorage, saveToStorage } from 'src/utils/storage'
 import { ADD_OR_UPDATE_SAFE } from '../actions/addOrUpdateSafe'
 import { SAFE_ROUTES } from 'src/routes/routes'
+import { getLowercaseNetworkName } from 'src/config'
 
 const watchedActions = [ADD_OR_UPDATE_SAFE, ADD_QUEUED_TRANSACTIONS, ADD_HISTORY_TRANSACTIONS]
 
@@ -71,6 +72,7 @@ const onNotificationClicked = (dispatch, notificationKey, safeAddress) => () => 
   dispatch(
     push(
       generatePath(SAFE_ROUTES.TRANSACTIONS, {
+        networkName: getLowercaseNetworkName(),
         safeAddress,
       }),
     ),

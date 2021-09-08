@@ -14,10 +14,12 @@ import {
 
 import Link from 'src/components/layout/Link'
 import Block from 'src/components/layout/Block'
-import { LOAD_ADDRESS, OPEN_ADDRESS } from 'src/routes/routes'
+import { LOAD_ROUTE, OPEN_ROUTE } from 'src/routes/routes'
 import { onConnectButtonClick } from 'src/components/ConnectButton'
 import { useSelector } from 'react-redux'
 import { providerNameSelector } from 'src/logic/wallets/store/selectors'
+import { getLowercaseNetworkName } from 'src/config'
+import { generatePath } from 'react-router'
 
 const Wrapper = styled.div`
   display: flex;
@@ -73,6 +75,10 @@ type Props = {
 
 export const WelcomeLayout = ({ isOldMultisigMigration }: Props): React.ReactElement => {
   const provider = useSelector(providerNameSelector)
+
+  const baseRouteSlugs = {
+    networkName: getLowercaseNetworkName(),
+  }
   return (
     <Block>
       {/* Title */}
@@ -149,7 +155,13 @@ export const WelcomeLayout = ({ isOldMultisigMigration }: Props): React.ReactEle
                 Create a new Safe that is controlled by one or multiple owners. <br />
                 You will be required to pay a network fee for creating your new Safe.
               </Text>
-              <StyledButton size="lg" color="primary" variant="contained" component={Link} to={OPEN_ADDRESS}>
+              <StyledButton
+                size="lg"
+                color="primary"
+                variant="contained"
+                component={Link}
+                to={generatePath(OPEN_ROUTE, baseRouteSlugs)}
+              >
                 <Text size="xl" color="white">
                   + Create new Safe
                 </Text>
@@ -174,7 +186,7 @@ export const WelcomeLayout = ({ isOldMultisigMigration }: Props): React.ReactEle
                 size="lg"
                 color="secondary"
                 component={Link}
-                to={LOAD_ADDRESS}
+                to={generatePath(LOAD_ROUTE, baseRouteSlugs)}
               >
                 <Text size="xl" color="secondary">
                   Add existing Safe

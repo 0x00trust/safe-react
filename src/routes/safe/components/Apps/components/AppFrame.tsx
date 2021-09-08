@@ -14,7 +14,13 @@ import { INTERFACE_MESSAGES, Transaction, RequestId, LowercaseNetworks } from '@
 import Web3 from 'web3'
 
 import { currentSafe } from 'src/logic/safe/store/selectors'
-import { getNetworkId, getNetworkName, getSafeAppsRpcServiceUrl, getTxServiceUrl } from 'src/config'
+import {
+  getNetworkId,
+  getNetworkName,
+  getLowercaseNetworkName,
+  getSafeAppsRpcServiceUrl,
+  getTxServiceUrl,
+} from 'src/config'
 import { SAFE_ROUTES } from 'src/routes/routes'
 import { isSameURL } from 'src/utils/url'
 import { useAnalytics, SAFE_NAVIGATION_EVENT } from 'src/utils/googleAnalytics'
@@ -99,6 +105,7 @@ const AppFrame = ({ appUrl }: Props): ReactElement => {
   const redirectToBalance = () =>
     history.push(
       generatePath(SAFE_ROUTES.ASSETS_BALANCES, {
+        networkName: getLowercaseNetworkName(),
         safeAddress,
       }),
     )

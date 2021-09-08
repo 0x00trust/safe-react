@@ -19,7 +19,7 @@ import {
   getSafeNameFrom,
   getThresholdFrom,
 } from 'src/routes/open/utils/safeDataExtractor'
-import { SAFE_ROUTES, WELCOME_ADDRESS } from 'src/routes/routes'
+import { SAFE_ROUTES, WELCOME_ROUTE } from 'src/routes/routes'
 import { buildSafe } from 'src/logic/safe/store/actions/fetchSafe'
 import { history } from 'src/store'
 import { loadFromStorage, removeFromStorage, saveToStorage } from 'src/utils/storage'
@@ -30,6 +30,7 @@ import { addOrUpdateSafe } from 'src/logic/safe/store/actions/addOrUpdateSafe'
 import { useAnalytics } from 'src/utils/googleAnalytics'
 import { sleep } from 'src/utils/timer'
 import { txMonitor } from 'src/logic/safe/transactions/txMonitor'
+import { getLowercaseNetworkName } from 'src/config'
 
 const SAFE_PENDING_CREATION_STORAGE_KEY = 'SAFE_PENDING_CREATION_STORAGE_KEY'
 
@@ -210,6 +211,7 @@ const Open = (): ReactElement => {
     await removeFromStorage(SAFE_PENDING_CREATION_STORAGE_KEY)
     const url = {
       pathname: generatePath(SAFE_ROUTES.ASSETS_BALANCES, {
+        networkName: getLowercaseNetworkName(),
         safeAddress: safeProps.address,
       }),
       state: {
@@ -224,7 +226,7 @@ const Open = (): ReactElement => {
   const onCancel = () => {
     removeFromStorage(SAFE_PENDING_CREATION_STORAGE_KEY)
     history.push({
-      pathname: `${WELCOME_ADDRESS}`,
+      pathname: `${WELCOME_ROUTE}`,
     })
   }
 

@@ -34,6 +34,7 @@ import { checkIfOffChainSignatureIsPossible, getPreValidatedSignatures } from 's
 import { TxParameters } from 'src/routes/safe/container/hooks/useTransactionParameters'
 import { isTxPendingError } from 'src/logic/wallets/getWeb3'
 import { Errors, logError } from 'src/logic/exceptions/CodedException'
+import { getLowercaseNetworkName } from 'src/config'
 
 export interface CreateTransactionArgs {
   navigateToTransactionsTab?: boolean
@@ -84,6 +85,7 @@ export const createTransaction =
       dispatch(
         push(
           generatePath(SAFE_ROUTES.TRANSACTIONS, {
+            networkName: getLowercaseNetworkName(),
             safeAddress,
           }),
         ),

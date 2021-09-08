@@ -4,30 +4,31 @@ import { useSelector } from 'react-redux'
 import { generatePath, Redirect, Route, Switch, useLocation, useRouteMatch } from 'react-router-dom'
 
 import {
-  LOAD_ADDRESS,
-  OPEN_ADDRESS,
-  SAFELIST_ADDRESS,
-  SAFE_PARAM_ADDRESS,
+  LOAD_ROUTE,
+  OPEN_ROUTE,
+  SAFELIST_ROUTE,
+  SAFE_ADDRESS_SLUG,
   SAFE_ROUTES,
-  WELCOME_ADDRESS,
+  WELCOME_ROUTE,
 } from 'src/routes/routes'
 
 import { LoadingContainer } from 'src/components/LoaderContainer'
 import { useAnalytics } from 'src/utils/googleAnalytics'
 import { lastViewedSafe } from 'src/logic/currentSession/store/selectors'
+import { getLowercaseNetworkName } from 'src/config'
 
 const Welcome = React.lazy(() => import('./welcome/container'))
 const Open = React.lazy(() => import('./open/container/Open'))
 const Safe = React.lazy(() => import('./safe/container'))
 const Load = React.lazy(() => import('./load/container/Load'))
 
-const SAFE_ADDRESS = `${SAFELIST_ADDRESS}/:${SAFE_PARAM_ADDRESS}`
+const SAFE_ADDRESS_ROUTE = `${SAFELIST_ROUTE}/:${SAFE_ADDRESS_SLUG}`
 
 const Routes = (): React.ReactElement => {
   const [isInitialLoad, setInitialLoad] = useState(true)
   const location = useLocation()
   const matchSafeWithAction = useRouteMatch<{ safeAddress: string; safeAction: string }>({
-    path: `${SAFELIST_ADDRESS}/:safeAddress/:safeAction`,
+    path: `${SAFELIST_ROUTE}/:safeAddress/:safeAction`,
   })
 
   const defaultSafe = useSelector(lastViewedSafe)
@@ -42,7 +43,7 @@ const Routes = (): React.ReactElement => {
   useEffect(() => {
     if (matchSafeWithAction) {
       // prevent logging safeAddress
-      let safePage = `${SAFELIST_ADDRESS}/SAFE_ADDRESS`
+      let safePage = `${SAFELIST_ROUTE}/SAFE_ADDRESS`
       if (matchSafeWithAction.params?.safeAction) {
         safePage += `/${matchSafeWithAction.params?.safeAction}`
       }
@@ -60,7 +61,7 @@ const Routes = (): React.ReactElement => {
         path="/"
         render={() => {
           if (!isInitialLoad) {
-            return <Redirect to={WELCOME_ADDRESS} />
+            return <Redirect to={WELCOME_ROUTE} />
           }
 
           if (defaultSafe === null) {
@@ -75,19 +76,20 @@ const Routes = (): React.ReactElement => {
             return (
               <Redirect
                 to={generatePath(SAFE_ROUTES.ASSETS_BALANCES, {
+                  networkName: getLowercaseNetworkName(),
                   safeAddress: defaultSafe,
                 })}
               />
             )
           }
 
-          return <Redirect to={WELCOME_ADDRESS} />
+          return <Redirect to={WELCOME_ROUTE} />
         }}
       />
-      <Route component={Welcome} exact path={WELCOME_ADDRESS} />
-      <Route component={Open} exact path={OPEN_ADDRESS} />
-      <Route component={Safe} path={SAFE_ADDRESS} />
-      <Route component={Load} path={`${LOAD_ADDRESS}/:safeAddress?`} />
+      <Route component={Welcome} exact path={WELCOME_ROUTE} />
+      <Route component={Open} exact path={OPEN_ROUTE} />
+      <Route component={Safe} path={SAFE_ADDRESS_ROUTE} />
+      <Route component={Load} path={`${LOAD_ROUTE}/:safeAddress?`} />
       <Redirect to="/" />
     </Switch>
   )

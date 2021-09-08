@@ -15,6 +15,7 @@ import { SAFE_ROUTES } from 'src/routes/routes'
 import { safeAddressFromUrl } from 'src/logic/safe/store/selectors'
 import { xs } from 'src/theme/variables'
 import { grantedSelector } from 'src/routes/safe/container/selector'
+import { getLowercaseNetworkName } from 'src/config'
 
 const useStyles = makeStyles(
   createStyles({
@@ -63,6 +64,7 @@ export const EllipsisTransactionDetails = ({
 
   const addOrEditEntryHandler = () => {
     const addressBookPath = generatePath(SAFE_ROUTES.ADDRESS_BOOK, {
+      networkName: getLowercaseNetworkName(),
       safeAddress: currentSafeAddress,
     })
 

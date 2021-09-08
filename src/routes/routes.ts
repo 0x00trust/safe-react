@@ -1,20 +1,25 @@
-export const SAFE_PARAM_ADDRESS = 'address'
-export const SAFELIST_ADDRESS = '/safes'
-export const OPEN_ADDRESS = '/open'
-export const LOAD_ADDRESS = '/load'
-export const WELCOME_ADDRESS = '/welcome'
+export const SAFE_ADDRESS_SLUG = 'address'
+export const SAFE_NETWORK_NAME_SLUG = 'networkName'
+export const SAFE_SAFE_ADDRESS_SLUG = 'safeAddress'
 
-export enum SAFE_ROUTES {
-  ASSETS_BASE_ROUTE = '/safes/:safeAddress/balances',
-  ASSETS_BALANCES = '/safes/:safeAddress/balances',
-  ASSETS_COLLECTIBLES = '/safes/:safeAddress/balances/collectibles',
-  TRANSACTIONS = '/safes/:safeAddress/transactions',
-  ADDRESS_BOOK = '/safes/:safeAddress/address-book',
-  APPS = '/safes/:safeAddress/apps',
-  SETTINGS_BASE_ROUTE = '/safes/:safeAddress/settings',
-  SETTINGS_DETAILS = '/safes/:safeAddress/settings/details',
-  SETTINGS_OWNERS = '/safes/:safeAddress/settings/owners',
-  SETTINGS_POLICIES = '/safes/:safeAddress/settings/policies',
-  SETTINGS_SPENDING_LIMIT = '/safes/:safeAddress/settings/spending-limit',
-  SETTINGS_ADVANCED = '/safes/:safeAddress/settings/advanced',
+export const SAFELIST_ROUTE = `/:${SAFE_NETWORK_NAME_SLUG}/safes`
+export const OPEN_ROUTE = `/:${SAFE_NETWORK_NAME_SLUG}/open`
+export const LOAD_ROUTE = `/:${SAFE_NETWORK_NAME_SLUG}/load`
+export const WELCOME_ROUTE = `/:${SAFE_NETWORK_NAME_SLUG}/welcome`
+
+const baseSafeRoute = `${SAFELIST_ROUTE}/:${SAFE_SAFE_ADDRESS_SLUG}`
+
+export const SAFE_ROUTES = {
+  ASSETS_BASE_ROUTE: `${baseSafeRoute}/balances`,
+  ASSETS_BALANCES: `${baseSafeRoute}/balances`,
+  ASSETS_COLLECTIBLES: `${baseSafeRoute}/balances/collectibles`,
+  TRANSACTIONS: `${baseSafeRoute}/transactions`,
+  ADDRESS_BOOK: `${baseSafeRoute}/address-book`,
+  APPS: `${baseSafeRoute}/apps`,
+  SETTINGS_BASE_ROUTE: `${baseSafeRoute}/settings`,
+  SETTINGS_DETAILS: `${baseSafeRoute}/settings/details`,
+  SETTINGS_OWNERS: `${baseSafeRoute}/settings/owners`,
+  SETTINGS_POLICIES: `${baseSafeRoute}/settings/owners`,
+  SETTINGS_SPENDING_LIMIT: `${baseSafeRoute}/settings/spending-limit`,
+  SETTINGS_ADVANCED: `${baseSafeRoute}/settings/advanced`,
 }

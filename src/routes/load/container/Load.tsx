@@ -23,6 +23,7 @@ import { checksumAddress } from 'src/utils/checksumAddress'
 import { isValidAddress } from 'src/utils/isValidAddress'
 import { providerNameSelector, userAccountSelector } from 'src/logic/wallets/store/selectors'
 import { addOrUpdateSafe } from 'src/logic/safe/store/actions/addOrUpdateSafe'
+import { getLowercaseNetworkName } from 'src/config'
 
 export const loadSafe = async (safeAddress: string, addSafe: (safe: SafeRecordProps) => void): Promise<void> => {
   const safeProps = await buildSafe(safeAddress)
@@ -97,6 +98,7 @@ const Load = (): ReactElement => {
 
       history.push(
         generatePath(SAFE_ROUTES.ASSETS_BALANCES, {
+          networkName: getLowercaseNetworkName(),
           safeAddress,
         }),
       )

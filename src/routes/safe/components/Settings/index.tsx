@@ -7,13 +7,14 @@ import { generatePath, Route, Switch, useRouteMatch } from 'react-router-dom'
 
 import { styles } from './style'
 
-import { SAFE_ROUTES, SAFELIST_ADDRESS } from 'src/routes/routes'
+import { SAFE_ROUTES, SAFELIST_ROUTE } from 'src/routes/routes'
 import Block from 'src/components/layout/Block'
 import ButtonLink from 'src/components/layout/ButtonLink'
 import Col from 'src/components/layout/Col'
 import Span from 'src/components/layout/Span'
 import { currentSafeWithNames } from 'src/logic/safe/store/selectors'
 import { grantedSelector } from 'src/routes/safe/container/selector'
+import { getLowercaseNetworkName } from 'src/config'
 
 const Advanced = React.lazy(() => import('./Advanced'))
 const SpendingLimitSettings = React.lazy(() => import('./SpendingLimit'))
@@ -36,37 +37,32 @@ const Settings = (): React.ReactElement => {
   const { address: safeAddress, owners, loadedViaUrl } = useSelector(currentSafeWithNames)
   const granted = useSelector(grantedSelector)
   const matchSafeWithAction = useRouteMatch({
-    path: `${SAFELIST_ADDRESS}/:safeAddress/:safeAction/:safeSubaction?`,
+    path: `${SAFELIST_ROUTE}/:safeAddress/:safeAction/:safeSubaction?`,
   }) as {
     url: string
     params: Record<string, string>
   }
 
+  const baseRouteSlugs = {
+    networkName: getLowercaseNetworkName(),
+    safeAddress,
+  }
+
   let settingsSection
   switch (matchSafeWithAction.url) {
-    case generatePath(SAFE_ROUTES.SETTINGS_DETAILS, {
-      safeAddress,
-    }):
+    case generatePath(SAFE_ROUTES.SETTINGS_DETAILS, baseRouteSlugs):
       settingsSection = 'Safe Details'
       break
-    case generatePath(SAFE_ROUTES.SETTINGS_OWNERS, {
-      safeAddress,
-    }):
+    case generatePath(SAFE_ROUTES.SETTINGS_OWNERS, baseRouteSlugs):
       settingsSection = 'Owners'
       break
-    case generatePath(SAFE_ROUTES.SETTINGS_POLICIES, {
-      safeAddress,
-    }):
+    case generatePath(SAFE_ROUTES.SETTINGS_POLICIES, baseRouteSlugs):
       settingsSection = 'Policies'
       break
-    case generatePath(SAFE_ROUTES.SETTINGS_SPENDING_LIMIT, {
-      safeAddress,
-    }):
+    case generatePath(SAFE_ROUTES.SETTINGS_SPENDING_LIMIT, baseRouteSlugs):
       settingsSection = 'Spending Limit'
       break
-    case generatePath(SAFE_ROUTES.SETTINGS_ADVANCED, {
-      safeAddress,
-    }):
+    case generatePath(SAFE_ROUTES.SETTINGS_ADVANCED, baseRouteSlugs):
       settingsSection = 'Advanced'
       break
     default:
@@ -113,37 +109,27 @@ const Settings = (): React.ReactElement => {
           <Block className={classes.container}>
             <Switch>
               <Route
-                path={generatePath(SAFE_ROUTES.SETTINGS_DETAILS, {
-                  safeAddress,
-                })}
+                path={generatePath(SAFE_ROUTES.SETTINGS_DETAILS, baseRouteSlugs)}
                 exact
                 render={() => <SafeDetails />}
               ></Route>
               <Route
-                path={generatePath(SAFE_ROUTES.SETTINGS_OWNERS, {
-                  safeAddress,
-                })}
+                path={generatePath(SAFE_ROUTES.SETTINGS_OWNERS, baseRouteSlugs)}
                 exact
                 render={() => <ManageOwners granted={granted} owners={owners} />}
               ></Route>
               <Route
-                path={generatePath(SAFE_ROUTES.SETTINGS_POLICIES, {
-                  safeAddress,
-                })}
+                path={generatePath(SAFE_ROUTES.SETTINGS_POLICIES, baseRouteSlugs)}
                 exact
                 render={() => <ThresholdSettings />}
               ></Route>
               <Route
-                path={generatePath(SAFE_ROUTES.SETTINGS_SPENDING_LIMIT, {
-                  safeAddress,
-                })}
+                path={generatePath(SAFE_ROUTES.SETTINGS_SPENDING_LIMIT, baseRouteSlugs)}
                 exact
                 render={() => <SpendingLimitSettings />}
               ></Route>
               <Route
-                path={generatePath(SAFE_ROUTES.SETTINGS_ADVANCED, {
-                  safeAddress,
-                })}
+                path={generatePath(SAFE_ROUTES.SETTINGS_ADVANCED, baseRouteSlugs)}
                 exact
                 render={() => <Advanced />}
               ></Route>

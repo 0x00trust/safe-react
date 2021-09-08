@@ -13,7 +13,7 @@ import Hairline from 'src/components/layout/Hairline'
 import Paragraph from 'src/components/layout/Paragraph'
 import Row from 'src/components/layout/Row'
 import { currentSafeWithNames } from 'src/logic/safe/store/selectors'
-import { WELCOME_ADDRESS } from 'src/routes/routes'
+import { WELCOME_ROUTE } from 'src/routes/routes'
 import removeSafe from 'src/logic/safe/store/actions/removeSafe'
 
 import { getExplorerInfo } from 'src/config'
@@ -34,7 +34,7 @@ const RemoveSafeModal = ({ isOpen, onClose }: RemoveSafeModalProps): React.React
 
     onClose()
     history.push({
-      pathname: `${WELCOME_ADDRESS}`,
+      pathname: `${WELCOME_ROUTE}`,
     })
   }
 

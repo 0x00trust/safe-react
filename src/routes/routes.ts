@@ -1,5 +1,7 @@
+import { createBrowserHistory } from 'history'
 import { getNetworkName } from 'src/config'
 
+export const history = createBrowserHistory()
 export const getNetworkNameSlug = (): string => getNetworkName().toLowerCase()
 
 export const SAFE_NETWORK_NAME_SLUG = 'networkName'

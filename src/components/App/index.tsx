@@ -20,7 +20,7 @@ import { getNetworkId } from 'src/config'
 import { ETHEREUM_NETWORK } from 'src/config/networks/network.d'
 import { networkSelector } from 'src/logic/wallets/store/selectors'
 import { getNetworkNameSlug, SAFELIST_ROUTE, WELCOME_ROUTE } from 'src/routes/routes'
-import { currentSafeWithNames, safeAddressFromUrl } from 'src/logic/safe/store/selectors'
+import { currentSafeWithNames } from 'src/logic/safe/store/selectors'
 import { currentCurrencySelector } from 'src/logic/currencyValues/store/selectors'
 import Modal from 'src/components/Modal'
 import SendModal from 'src/routes/safe/components/Balances/SendModal'
@@ -33,6 +33,7 @@ import { grantedSelector } from 'src/routes/safe/container/selector'
 import ReceiveModal from './ReceiveModal'
 import { useSidebarItems } from 'src/components/AppLayout/Sidebar/useSidebarItems'
 import useAddressBookSync from 'src/logic/addressBook/hooks/useAddressBookSync'
+import { safeAddressFromUrl } from 'src/utils/router'
 
 const notificationStyles = {
   success: {
@@ -72,7 +73,7 @@ const App: React.FC = ({ children }) => {
     name: safeName,
     totalFiatBalance: currentSafeBalance,
   } = useSelector(currentSafeWithNames)
-  const addressFromUrl = useSelector(safeAddressFromUrl)
+  const addressFromUrl = safeAddressFromUrl()
   const { safeActionsState, onShow, onHide, showSendFunds, hideSendFunds } = useSafeActions()
   const currentCurrency = useSelector(currentCurrencySelector)
   const granted = useSelector(grantedSelector)

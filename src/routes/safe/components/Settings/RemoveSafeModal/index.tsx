@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { useStyles } from './style'
 
-import { history } from 'src/store'
+import { history } from 'src/routes/routes'
 import Modal, { Modal as GenericModal } from 'src/components/Modal'
 import Block from 'src/components/layout/Block'
 import Hairline from 'src/components/layout/Hairline'

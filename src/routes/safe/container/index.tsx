@@ -2,13 +2,14 @@ import { GenericModal, Loader } from '@gnosis.pm/safe-react-components'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { generatePath, Redirect, Switch } from 'react-router-dom'
-import { currentSafeFeaturesEnabled, currentSafeOwners, safeAddressFromUrl } from 'src/logic/safe/store/selectors'
+import { currentSafeFeaturesEnabled, currentSafeOwners } from 'src/logic/safe/store/selectors'
 import { wrapInSuspense } from 'src/utils/wrapInSuspense'
 import { getNetworkNameSlug, SAFE_ROUTES } from 'src/routes/routes'
 import { FEATURES } from 'src/config/networks/network.d'
 import { LoadingContainer } from 'src/components/LoaderContainer'
 import { LEGACY_SAFE_ROUTES } from 'src/routes/legacy/routes'
 import FilterLegacyRoutesRoute from 'src/routes/legacy/FilterLegacyRoutesRoute'
+import { safeAddressFromUrl } from 'src/utils/router'
 
 export const BALANCES_TAB_BTN_TEST_ID = 'balances-tab-btn'
 export const SETTINGS_TAB_BTN_TEST_ID = 'settings-tab-btn'
@@ -25,7 +26,7 @@ const TxList = React.lazy(() => import('src/routes/safe/components/Transactions/
 const AddressBookTable = React.lazy(() => import('src/routes/safe/components/AddressBook'))
 
 const Container = (): React.ReactElement => {
-  const safeAddress = useSelector(safeAddressFromUrl)
+  const safeAddress = safeAddressFromUrl()
   const featuresEnabled = useSelector(currentSafeFeaturesEnabled)
   const owners = useSelector(currentSafeOwners)
   const isSafeLoaded = owners.length > 0

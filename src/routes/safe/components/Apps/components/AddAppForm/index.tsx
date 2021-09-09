@@ -1,14 +1,11 @@
 import { Icon, Link, Loader, Text, TextField } from '@gnosis.pm/safe-react-components'
 import React, { useState, ReactElement, useCallback, useEffect } from 'react'
-import { useSelector } from 'react-redux'
 import { generatePath, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-
 import { SafeApp, StoredSafeApp } from 'src/routes/safe/components/Apps/types'
 import GnoForm from 'src/components/forms/GnoForm'
 import Img from 'src/components/layout/Img'
 import { Modal } from 'src/components/Modal'
-
 import AppAgreement from './AppAgreement'
 import AppUrl, { AppInfoUpdater, appUrlResolver } from './AppUrl'
 import { FormButtons } from './FormButtons'
@@ -16,7 +13,7 @@ import { APPS_STORAGE_KEY, getEmptySafeApp } from 'src/routes/safe/components/Ap
 import { loadFromStorage, saveToStorage } from 'src/utils/storage'
 import { getNetworkNameSlug, SAFE_ROUTES } from 'src/routes/routes'
 import { Errors, logError } from 'src/logic/exceptions/CodedException'
-import { safeAddressFromUrl } from 'src/logic/safe/store/selectors'
+import { safeAddressFromUrl } from 'src/utils/router'
 
 const FORM_ID = 'add-apps-form'
 
@@ -80,7 +77,7 @@ interface AddAppProps {
 }
 
 const AddApp = ({ appList, closeModal }: AddAppProps): ReactElement => {
-  const safeAddress = useSelector(safeAddressFromUrl)
+  const safeAddress = safeAddressFromUrl()
   const appsPath = generatePath(SAFE_ROUTES.APPS, {
     networkName: getNetworkNameSlug(),
     safeAddress,

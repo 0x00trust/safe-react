@@ -10,7 +10,7 @@ import Controls from './Controls'
 
 import GnoForm from 'src/components/forms/GnoForm'
 import Hairline from 'src/components/layout/Hairline'
-import { history } from 'src/store'
+import { history } from 'src/routes/routes'
 import { LoadFormValues } from 'src/routes/load/container/Load'
 
 const transitionProps = {

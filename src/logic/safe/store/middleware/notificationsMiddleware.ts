@@ -1,7 +1,6 @@
-import { push } from 'connected-react-router'
 import { generatePath } from 'react-router-dom'
 import { Action } from 'redux-actions'
-
+import { history } from 'src/routes/routes'
 import { NOTIFICATIONS, enhanceSnackbarForAction } from 'src/logic/notifications'
 import closeSnackbarAction from 'src/logic/notifications/store/actions/closeSnackbar'
 import enqueueSnackbar from 'src/logic/notifications/store/actions/enqueueSnackbar'
@@ -16,13 +15,14 @@ import {
 } from 'src/logic/safe/store/actions/transactions/gatewayTransactions'
 import * as aboutToExecuteTx from 'src/logic/safe/utils/aboutToExecuteTx'
 import { QueuedPayload } from 'src/logic/safe/store/reducer/gatewayTransactions'
-import { safeAddressFromUrl, safesAsMap } from 'src/logic/safe/store/selectors'
+import { safesAsMap } from 'src/logic/safe/store/selectors'
 
 import { isTransactionSummary } from 'src/logic/safe/store/models/types/gateway.d'
 import { TransactionListItem, Transaction, TransactionSummary } from '@gnosis.pm/safe-react-gateway-sdk'
 import { loadFromStorage, saveToStorage } from 'src/utils/storage'
 import { ADD_OR_UPDATE_SAFE } from '../actions/addOrUpdateSafe'
 import { getNetworkNameSlug, SAFE_ROUTES } from 'src/routes/routes'
+import { safeAddressFromUrl } from 'src/utils/router'
 
 const watchedActions = [ADD_OR_UPDATE_SAFE, ADD_QUEUED_TRANSACTIONS, ADD_HISTORY_TRANSACTIONS]
 
@@ -68,17 +68,16 @@ const sendAwaitingTransactionNotification = async (
 
 const onNotificationClicked = (dispatch, notificationKey, safeAddress) => () => {
   dispatch(closeSnackbarAction({ key: notificationKey }))
-  dispatch(
-    push(
-      generatePath(SAFE_ROUTES.TRANSACTIONS, {
-        networkName: getNetworkNameSlug(),
-        safeAddress,
-      }),
-    ),
+  history.push(
+    generatePath(SAFE_ROUTES.TRANSACTIONS, {
+      networkName: getNetworkNameSlug(),
+      safeAddress,
+    }),
   )
 }
 
-const notificationsMiddleware = (store) => (next) => async (action) => {
+// FIXME: Types
+const notificationsMiddleware = (store: any) => (next: any) => async (action: any) => {
   const handledAction = next(action)
   const { dispatch } = store
 
@@ -128,7 +127,7 @@ const notificationsMiddleware = (store) => (next) => async (action) => {
       case ADD_OR_UPDATE_SAFE: {
         const state = store.getState()
         const { safe } = action.payload
-        const currentSafeAddress = safeAddressFromUrl(state) || safe.address
+        const currentSafeAddress = safeAddressFromUrl() || safe.address
         if (!currentSafeAddress || !safe.currentVersion) {
           break
         }
@@ -138,7 +137,7 @@ const notificationsMiddleware = (store) => (next) => async (action) => {
         const notificationKey = `${currentSafeAddress}-update`
         const onNotificationClicked = () => {
           dispatch(closeSnackbarAction({ key: notificationKey }))
-          dispatch(push(`/safes/${currentSafeAddress}/settings`))
+          history.push(`/safes/${currentSafeAddress}/settings`)
         }
 
         if (version?.needUpdate && isUserOwner) {

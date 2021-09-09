@@ -21,7 +21,7 @@ import {
 } from 'src/routes/open/utils/safeDataExtractor'
 import { getNetworkNameSlug, SAFE_ROUTES, WELCOME_ROUTE } from 'src/routes/routes'
 import { buildSafe } from 'src/logic/safe/store/actions/fetchSafe'
-import { history } from 'src/store'
+import { history } from 'src/routes/routes'
 import { loadFromStorage, removeFromStorage, saveToStorage } from 'src/utils/storage'
 import { makeAddressBookEntry } from 'src/logic/addressBook/model/addressBook'
 import { addressBookSafeLoad } from 'src/logic/addressBook/store/actions'

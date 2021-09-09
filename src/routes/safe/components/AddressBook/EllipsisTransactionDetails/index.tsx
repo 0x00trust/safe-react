@@ -3,18 +3,17 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import { makeStyles } from '@material-ui/core/styles'
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz'
-import { push } from 'connected-react-router'
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { generatePath } from 'react-router-dom'
-
+import { history } from 'src/routes/routes'
 import { sameString } from 'src/utils/strings'
 import { ADDRESS_BOOK_DEFAULT_NAME } from 'src/logic/addressBook/model/addressBook'
 import { addressBookEntryName } from 'src/logic/addressBook/store/selectors'
 import { getNetworkNameSlug, SAFE_ROUTES } from 'src/routes/routes'
-import { safeAddressFromUrl } from 'src/logic/safe/store/selectors'
 import { xs } from 'src/theme/variables'
 import { grantedSelector } from 'src/routes/safe/container/selector'
+import { safeAddressFromUrl } from 'src/utils/router'
 
 const useStyles = makeStyles(
   createStyles({
@@ -49,8 +48,7 @@ export const EllipsisTransactionDetails = ({
   const classes = useStyles()
   const [anchorEl, setAnchorEl] = React.useState(null)
 
-  const dispatch = useDispatch()
-  const currentSafeAddress = useSelector(safeAddressFromUrl)
+  const currentSafeAddress = safeAddressFromUrl()
   const isOwnerConnected = useSelector(grantedSelector)
 
   const recipientName = useSelector((state) => addressBookEntryName(state, { address }))
@@ -67,7 +65,7 @@ export const EllipsisTransactionDetails = ({
       safeAddress: currentSafeAddress,
     })
 
-    dispatch(push(`${addressBookPath}?entryAddress=${address}`))
+    history.push(`${addressBookPath}?entryAddress=${address}`)
     closeMenuHandler()
   }
 

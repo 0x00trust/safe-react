@@ -3,10 +3,8 @@ import { LoadingContainer } from 'src/components/LoaderContainer'
 import { makeStyles } from '@material-ui/core/styles'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { generatePath, Route, Switch, useRouteMatch } from 'react-router-dom'
-
+import { generatePath, Switch, useRouteMatch } from 'react-router-dom'
 import { styles } from './style'
-
 import { SAFE_ROUTES, SAFELIST_ROUTE, getNetworkNameSlug } from 'src/routes/routes'
 import Block from 'src/components/layout/Block'
 import ButtonLink from 'src/components/layout/ButtonLink'
@@ -14,6 +12,8 @@ import Col from 'src/components/layout/Col'
 import Span from 'src/components/layout/Span'
 import { currentSafeWithNames } from 'src/logic/safe/store/selectors'
 import { grantedSelector } from 'src/routes/safe/container/selector'
+import { LEGACY_SAFE_ROUTES } from 'src/routes/legacy/routes'
+import FilterLegacyRoutesRoute from 'src/routes/legacy'
 
 const Advanced = React.lazy(() => import('./Advanced'))
 const SpendingLimitSettings = React.lazy(() => import('./SpendingLimit'))
@@ -107,31 +107,41 @@ const Settings = (): React.ReactElement => {
         <Col className={classes.contents} layout="column">
           <Block className={classes.container}>
             <Switch>
-              <Route
-                path={generatePath(SAFE_ROUTES.SETTINGS_DETAILS, baseRouteSlugs)}
+              <FilterLegacyRoutesRoute
+                path={[SAFE_ROUTES.SETTINGS_DETAILS, LEGACY_SAFE_ROUTES.SETTINGS_DETAILS].map((path) =>
+                  generatePath(path, baseRouteSlugs),
+                )}
                 exact
                 render={() => <SafeDetails />}
-              ></Route>
-              <Route
-                path={generatePath(SAFE_ROUTES.SETTINGS_OWNERS, baseRouteSlugs)}
+              />
+              <FilterLegacyRoutesRoute
+                path={[SAFE_ROUTES.SETTINGS_OWNERS, LEGACY_SAFE_ROUTES.SETTINGS_OWNERS].map((path) =>
+                  generatePath(path, baseRouteSlugs),
+                )}
                 exact
                 render={() => <ManageOwners granted={granted} owners={owners} />}
-              ></Route>
-              <Route
-                path={generatePath(SAFE_ROUTES.SETTINGS_POLICIES, baseRouteSlugs)}
+              />
+              <FilterLegacyRoutesRoute
+                path={[SAFE_ROUTES.SETTINGS_POLICIES, LEGACY_SAFE_ROUTES.SETTINGS_POLICIES].map((path) =>
+                  generatePath(path, baseRouteSlugs),
+                )}
                 exact
                 render={() => <ThresholdSettings />}
-              ></Route>
-              <Route
-                path={generatePath(SAFE_ROUTES.SETTINGS_SPENDING_LIMIT, baseRouteSlugs)}
+              />
+              <FilterLegacyRoutesRoute
+                path={[SAFE_ROUTES.SETTINGS_SPENDING_LIMIT, LEGACY_SAFE_ROUTES.SETTINGS_SPENDING_LIMIT].map((path) =>
+                  generatePath(path, baseRouteSlugs),
+                )}
                 exact
                 render={() => <SpendingLimitSettings />}
-              ></Route>
-              <Route
-                path={generatePath(SAFE_ROUTES.SETTINGS_ADVANCED, baseRouteSlugs)}
+              />
+              <FilterLegacyRoutesRoute
+                path={[SAFE_ROUTES.SETTINGS_ADVANCED, LEGACY_SAFE_ROUTES.SETTINGS_ADVANCED].map((path) =>
+                  generatePath(path, baseRouteSlugs),
+                )}
                 exact
                 render={() => <Advanced />}
-              ></Route>
+              />
             </Switch>
           </Block>
         </Col>

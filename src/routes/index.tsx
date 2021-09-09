@@ -1,7 +1,7 @@
 import { Loader } from '@gnosis.pm/safe-react-components'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { generatePath, Redirect, Route, Switch, useLocation, useRouteMatch } from 'react-router-dom'
+import { generatePath, Redirect, Switch, useLocation, useRouteMatch } from 'react-router-dom'
 
 import {
   getNetworkNameSlug,
@@ -16,12 +16,21 @@ import {
 import { LoadingContainer } from 'src/components/LoaderContainer'
 import { useAnalytics } from 'src/utils/googleAnalytics'
 import { lastViewedSafe } from 'src/logic/currentSession/store/selectors'
+import {
+  LEGACY_LOAD_ADDRESS,
+  LEGACY_OPEN_ADDRESS,
+  LEGACY_SAFELIST_ADDRESS,
+  LEGACY_SAFE_PARAM_ADDRESS,
+  LEGACY_WELCOME_ADDRESS,
+} from './legacy/routes'
+import FilterLegacyRoutesRoute from './legacy'
 
 const Welcome = React.lazy(() => import('./welcome/container'))
 const Open = React.lazy(() => import('./open/container/Open'))
 const Safe = React.lazy(() => import('./safe/container'))
 const Load = React.lazy(() => import('./load/container/Load'))
 
+const LEGACY_SAFE_ADDRESS_ROUTE = `${LEGACY_SAFELIST_ADDRESS}/:${LEGACY_SAFE_PARAM_ADDRESS}`
 const SAFE_ADDRESS_ROUTE = `${SAFELIST_ROUTE}/:${SAFE_ADDRESS_SLUG}`
 
 const Routes = (): React.ReactElement => {
@@ -54,18 +63,14 @@ const Routes = (): React.ReactElement => {
     }
   }, [location, matchSafeWithAction, trackPage])
 
-  const baseRouteSlugs = {
-    networkName: getNetworkNameSlug(),
-  }
-
   return (
     <Switch>
-      <Route
+      <FilterLegacyRoutesRoute
         exact
         path="/"
         render={() => {
           if (!isInitialLoad) {
-            return <Redirect to={generatePath(WELCOME_ROUTE, baseRouteSlugs)} />
+            return <Redirect to={WELCOME_ROUTE} />
           }
 
           if (defaultSafe === null) {
@@ -80,20 +85,23 @@ const Routes = (): React.ReactElement => {
             return (
               <Redirect
                 to={generatePath(SAFE_ROUTES.ASSETS_BALANCES, {
-                  ...baseRouteSlugs,
+                  networkName: getNetworkNameSlug(),
                   safeAddress: defaultSafe,
                 })}
               />
             )
           }
 
-          return <Redirect to={generatePath(WELCOME_ROUTE, baseRouteSlugs)} />
+          return <Redirect to={WELCOME_ROUTE} />
         }}
       />
-      <Route component={Welcome} exact path={WELCOME_ROUTE} />
-      <Route component={Open} exact path={OPEN_ROUTE} />
-      <Route component={Safe} path={SAFE_ADDRESS_ROUTE} />
-      <Route component={Load} path={`${LOAD_ROUTE}/:safeAddress?`} />
+      <FilterLegacyRoutesRoute component={Welcome} exact path={[WELCOME_ROUTE, LEGACY_WELCOME_ADDRESS]} />
+      <FilterLegacyRoutesRoute component={Open} exact path={[OPEN_ROUTE, LEGACY_OPEN_ADDRESS]} />
+      <FilterLegacyRoutesRoute component={Safe} path={[SAFE_ADDRESS_ROUTE, LEGACY_SAFE_ADDRESS_ROUTE]} />
+      <FilterLegacyRoutesRoute
+        component={Load}
+        path={[`${LOAD_ROUTE}/:safeAddress?`, `${LEGACY_LOAD_ADDRESS}/:safeAddress?`]}
+      />
       <Redirect to="/" />
     </Switch>
   )

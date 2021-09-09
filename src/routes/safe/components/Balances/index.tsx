@@ -1,7 +1,7 @@
 import { Breadcrumb, BreadcrumbElement, Menu } from '@gnosis.pm/safe-react-components'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { generatePath, Redirect, Route, Switch, useRouteMatch } from 'react-router-dom'
+import { generatePath, Redirect, Switch, useRouteMatch } from 'react-router-dom'
 
 import Col from 'src/components/layout/Col'
 import Modal from 'src/components/Modal'
@@ -14,6 +14,8 @@ import { currentSafeWithNames } from 'src/logic/safe/store/selectors'
 
 import { wrapInSuspense } from 'src/utils/wrapInSuspense'
 import { FEATURES } from 'src/config/networks/network.d'
+import { LEGACY_SAFE_ROUTES } from 'src/routes/legacy/routes'
+import FilterLegacyRoutesRoute from 'src/routes/legacy'
 
 const Collectibles = React.lazy(() => import('src/routes/safe/components/Balances/Collectibles'))
 const Coins = React.lazy(() => import('src/routes/safe/components/Balances/Coins'))
@@ -111,8 +113,10 @@ const Balances = (): ReactElement => {
           </Breadcrumb>
         </Col>
         <Switch>
-          <Route
-            path={generatePath(SAFE_ROUTES.ASSETS_COLLECTIBLES, baseRouteSlugs)}
+          <FilterLegacyRoutesRoute
+            path={[SAFE_ROUTES.ASSETS_COLLECTIBLES, LEGACY_SAFE_ROUTES.ASSETS_COLLECTIBLES].map((path) =>
+              generatePath(path, baseRouteSlugs),
+            )}
             exact
             render={() => {
               return !erc721Enabled ? (
@@ -122,8 +126,10 @@ const Balances = (): ReactElement => {
               )
             }}
           />
-          <Route
-            path={generatePath(SAFE_ROUTES.ASSETS_BALANCES, baseRouteSlugs)}
+          <FilterLegacyRoutesRoute
+            path={[SAFE_ROUTES.ASSETS_BALANCES, LEGACY_SAFE_ROUTES.ASSETS_BALANCES].map((path) =>
+              generatePath(path, baseRouteSlugs),
+            )}
             exact
             render={() => (
               <Col end="sm" sm={6} xs={12}>
@@ -134,8 +140,10 @@ const Balances = (): ReactElement => {
         </Switch>
       </Menu>
       <Switch>
-        <Route
-          path={generatePath(SAFE_ROUTES.ASSETS_COLLECTIBLES, baseRouteSlugs)}
+        <FilterLegacyRoutesRoute
+          path={[SAFE_ROUTES.ASSETS_COLLECTIBLES, LEGACY_SAFE_ROUTES.ASSETS_COLLECTIBLES].map((path) =>
+            generatePath(path, baseRouteSlugs),
+          )}
           exact
           render={() => {
             if (erc721Enabled) {
@@ -144,8 +152,10 @@ const Balances = (): ReactElement => {
             return null
           }}
         />
-        <Route
-          path={generatePath(SAFE_ROUTES.ASSETS_BALANCES, baseRouteSlugs)}
+        <FilterLegacyRoutesRoute
+          path={[SAFE_ROUTES.ASSETS_BALANCES, LEGACY_SAFE_ROUTES.ASSETS_BALANCES].map((path) =>
+            generatePath(path, baseRouteSlugs),
+          )}
           render={() => {
             return wrapInSuspense(<Coins showReceiveFunds={() => onShow('Receive')} showSendFunds={showSendFunds} />)
           }}

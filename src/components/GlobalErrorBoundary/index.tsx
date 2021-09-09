@@ -73,9 +73,15 @@ export const handleChunkError = (error: Error): boolean => {
   return true
 }
 
+// Workaround: FallbackRender expects GlobalErrorBoundaryFallback to return an element, not null
+const ChunkErrorHandler = ({ error }: Pick<Parameters<FallbackRender>[0], 'error'>) => {
+  handleChunkError(error)
+  return null
+}
+
 const GlobalErrorBoundaryFallback: FallbackRender = ({ error, componentStack }) => {
   if (handleChunkError(error)) {
-    return null
+    return <ChunkErrorHandler error={error} />
   }
 
   return (

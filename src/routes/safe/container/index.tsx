@@ -8,7 +8,7 @@ import { getNetworkNameSlug, SAFE_ROUTES } from 'src/routes/routes'
 import { FEATURES } from 'src/config/networks/network.d'
 import { LoadingContainer } from 'src/components/LoaderContainer'
 import { LEGACY_SAFE_ROUTES } from 'src/routes/legacy/routes'
-import FilterLegacyRoutesRoute from 'src/routes/legacy'
+import FilterLegacyRoutesRoute from 'src/routes/legacy/FilterLegacyRoutesRoute'
 
 export const BALANCES_TAB_BTN_TEST_ID = 'balances-tab-btn'
 export const SETTINGS_TAB_BTN_TEST_ID = 'settings-tab-btn'
@@ -50,12 +50,6 @@ const Container = (): React.ReactElement => {
     networkName: getNetworkNameSlug(),
     safeAddress,
   }
-  const balancesBaseRoute = [SAFE_ROUTES.ASSETS_BASE_ROUTE, LEGACY_SAFE_ROUTES.ASSETS_BASE_ROUTE].map((path) =>
-    generatePath(path, baseRouteSlugs),
-  )
-  const settingsBaseRoute = [SAFE_ROUTES.SETTINGS_BASE_ROUTE, LEGACY_SAFE_ROUTES.SETTINGS_BASE_ROUTE].map((path) =>
-    generatePath(path, baseRouteSlugs),
-  )
 
   const closeGenericModal = () => {
     if (modal.onClose) {
@@ -76,19 +70,24 @@ const Container = (): React.ReactElement => {
       <Switch>
         <FilterLegacyRoutesRoute
           exact
-          path={`${balancesBaseRoute}/:assetType?`}
+          path={[SAFE_ROUTES.ASSETS_BASE_ROUTE, LEGACY_SAFE_ROUTES.ASSETS_BASE_ROUTE].map(
+            (path) => `${path}/:assetType?`,
+          )}
           render={() => wrapInSuspense(<Balances />, null)}
         />
         <FilterLegacyRoutesRoute
           exact
-          path={[SAFE_ROUTES.TRANSACTIONS, LEGACY_SAFE_ROUTES.TRANSACTIONS].map((path) =>
-            generatePath(path, baseRouteSlugs),
-          )}
+          path={[SAFE_ROUTES.TRANSACTIONS, LEGACY_SAFE_ROUTES.TRANSACTIONS]}
           render={() => wrapInSuspense(<TxList />, null)}
         />
         <FilterLegacyRoutesRoute
           exact
-          path={[SAFE_ROUTES.APPS, LEGACY_SAFE_ROUTES.APPS].map((path) => generatePath(path, baseRouteSlugs))}
+          path={[SAFE_ROUTES.ADDRESS_BOOK, LEGACY_SAFE_ROUTES.ADDRESS_BOOK]}
+          render={() => wrapInSuspense(<AddressBookTable />, null)}
+        />
+        <FilterLegacyRoutesRoute
+          exact
+          path={[SAFE_ROUTES.APPS, LEGACY_SAFE_ROUTES.APPS]}
           render={({ history }) => {
             if (!featuresEnabled.includes(FEATURES.SAFE_APPS)) {
               history.push(generatePath(SAFE_ROUTES.ASSETS_BALANCES, baseRouteSlugs))
@@ -98,15 +97,8 @@ const Container = (): React.ReactElement => {
         />
         <FilterLegacyRoutesRoute
           exact
-          path={`${settingsBaseRoute}/:section`}
+          path={[SAFE_ROUTES.SETTINGS_BASE_ROUTE, LEGACY_SAFE_ROUTES.SETTINGS_BASE_ROUTE]}
           render={() => wrapInSuspense(<Settings />, null)}
-        />
-        <FilterLegacyRoutesRoute
-          exact
-          path={[SAFE_ROUTES.ADDRESS_BOOK, LEGACY_SAFE_ROUTES.ADDRESS_BOOK].map((path) =>
-            generatePath(path, baseRouteSlugs),
-          )}
-          render={() => wrapInSuspense(<AddressBookTable />, null)}
         />
         <Redirect to={generatePath(SAFE_ROUTES.ASSETS_BALANCES, baseRouteSlugs)} />
       </Switch>

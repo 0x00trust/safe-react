@@ -1,20 +1,23 @@
-export const LEGACY_SAFE_PARAM_ADDRESS = 'address'
+import { SAFE_SAFE_ADDRESS_SLUG } from '../routes'
+
 export const LEGACY_SAFELIST_ADDRESS = '/safes'
 export const LEGACY_OPEN_ADDRESS = '/open'
 export const LEGACY_LOAD_ADDRESS = '/load'
 export const LEGACY_WELCOME_ADDRESS = '/welcome'
 
-export enum LEGACY_SAFE_ROUTES {
-  ASSETS_BASE_ROUTE = '/safes/:safeAddress/balances',
-  ASSETS_BALANCES = '/safes/:safeAddress/balances',
-  ASSETS_COLLECTIBLES = '/safes/:safeAddress/balances/collectibles',
-  TRANSACTIONS = '/safes/:safeAddress/transactions',
-  ADDRESS_BOOK = '/safes/:safeAddress/address-book',
-  APPS = '/safes/:safeAddress/apps',
-  SETTINGS_BASE_ROUTE = '/safes/:safeAddress/settings',
-  SETTINGS_DETAILS = '/safes/:safeAddress/settings/details',
-  SETTINGS_OWNERS = '/safes/:safeAddress/settings/owners',
-  SETTINGS_POLICIES = '/safes/:safeAddress/settings/policies',
-  SETTINGS_SPENDING_LIMIT = '/safes/:safeAddress/settings/spending-limit',
-  SETTINGS_ADVANCED = '/safes/:safeAddress/settings/advanced',
+export const LEGACY_BASE_SAFE_ROUTE = `${LEGACY_SAFELIST_ADDRESS}/:${SAFE_SAFE_ADDRESS_SLUG}`
+
+export const LEGACY_SAFE_ROUTES = {
+  ASSETS_BASE_ROUTE: `${LEGACY_BASE_SAFE_ROUTE}/balances`,
+  ASSETS_BALANCES: `${LEGACY_BASE_SAFE_ROUTE}/balances`,
+  ASSETS_COLLECTIBLES: `${LEGACY_BASE_SAFE_ROUTE}/balances/collectibles`,
+  TRANSACTIONS: `${LEGACY_BASE_SAFE_ROUTE}/transactions`,
+  ADDRESS_BOOK: `${LEGACY_BASE_SAFE_ROUTE}/address-book`,
+  APPS: `${LEGACY_BASE_SAFE_ROUTE}/apps`,
+  SETTINGS_BASE_ROUTE: `${LEGACY_BASE_SAFE_ROUTE}/settings`,
+  SETTINGS_DETAILS: `${LEGACY_BASE_SAFE_ROUTE}/settings/details`,
+  SETTINGS_OWNERS: `${LEGACY_BASE_SAFE_ROUTE}/settings/owners`,
+  SETTINGS_POLICIES: `${LEGACY_BASE_SAFE_ROUTE}/settings/policies`,
+  SETTINGS_SPENDING_LIMIT: `${LEGACY_BASE_SAFE_ROUTE}/settings/spending-limit`,
+  SETTINGS_ADVANCED: `${LEGACY_BASE_SAFE_ROUTE}/settings/advanced`,
 }

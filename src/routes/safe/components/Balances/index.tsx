@@ -15,7 +15,7 @@ import { currentSafeWithNames } from 'src/logic/safe/store/selectors'
 import { wrapInSuspense } from 'src/utils/wrapInSuspense'
 import { FEATURES } from 'src/config/networks/network.d'
 import { LEGACY_SAFE_ROUTES } from 'src/routes/legacy/routes'
-import FilterLegacyRoutesRoute from 'src/routes/legacy'
+import FilterLegacyRoutesRoute from 'src/routes/legacy/FilterLegacyRoutesRoute'
 
 const Collectibles = React.lazy(() => import('src/routes/safe/components/Balances/Collectibles'))
 const Coins = React.lazy(() => import('src/routes/safe/components/Balances/Coins'))
@@ -114,9 +114,7 @@ const Balances = (): ReactElement => {
         </Col>
         <Switch>
           <FilterLegacyRoutesRoute
-            path={[SAFE_ROUTES.ASSETS_COLLECTIBLES, LEGACY_SAFE_ROUTES.ASSETS_COLLECTIBLES].map((path) =>
-              generatePath(path, baseRouteSlugs),
-            )}
+            path={[SAFE_ROUTES.ASSETS_COLLECTIBLES, LEGACY_SAFE_ROUTES.ASSETS_COLLECTIBLES]}
             exact
             render={() => {
               return !erc721Enabled ? (
@@ -127,9 +125,7 @@ const Balances = (): ReactElement => {
             }}
           />
           <FilterLegacyRoutesRoute
-            path={[SAFE_ROUTES.ASSETS_BALANCES, LEGACY_SAFE_ROUTES.ASSETS_BALANCES].map((path) =>
-              generatePath(path, baseRouteSlugs),
-            )}
+            path={[SAFE_ROUTES.ASSETS_BALANCES, LEGACY_SAFE_ROUTES.ASSETS_BALANCES]}
             exact
             render={() => (
               <Col end="sm" sm={6} xs={12}>
@@ -141,9 +137,7 @@ const Balances = (): ReactElement => {
       </Menu>
       <Switch>
         <FilterLegacyRoutesRoute
-          path={[SAFE_ROUTES.ASSETS_COLLECTIBLES, LEGACY_SAFE_ROUTES.ASSETS_COLLECTIBLES].map((path) =>
-            generatePath(path, baseRouteSlugs),
-          )}
+          path={[SAFE_ROUTES.ASSETS_COLLECTIBLES, LEGACY_SAFE_ROUTES.ASSETS_COLLECTIBLES]}
           exact
           render={() => {
             if (erc721Enabled) {
@@ -153,9 +147,7 @@ const Balances = (): ReactElement => {
           }}
         />
         <FilterLegacyRoutesRoute
-          path={[SAFE_ROUTES.ASSETS_BALANCES, LEGACY_SAFE_ROUTES.ASSETS_BALANCES].map((path) =>
-            generatePath(path, baseRouteSlugs),
-          )}
+          path={[SAFE_ROUTES.ASSETS_BALANCES, LEGACY_SAFE_ROUTES.ASSETS_BALANCES]}
           render={() => {
             return wrapInSuspense(<Coins showReceiveFunds={() => onShow('Receive')} showSendFunds={showSendFunds} />)
           }}

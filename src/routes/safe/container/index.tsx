@@ -8,7 +8,7 @@ import { getNetworkNameSlug, SAFE_ROUTES } from 'src/routes/routes'
 import { FEATURES } from 'src/config/networks/network.d'
 import { LoadingContainer } from 'src/components/LoaderContainer'
 import { LEGACY_SAFE_ROUTES } from 'src/routes/legacy/routes'
-import FilterLegacyRoutesRoute from 'src/routes/legacy/FilterLegacyRoutesRoute'
+import ChainRoute from 'src/routes/legacy/components/ChainRoute'
 import { safeAddressFromUrl } from 'src/utils/router'
 
 export const BALANCES_TAB_BTN_TEST_ID = 'balances-tab-btn'
@@ -69,24 +69,24 @@ const Container = (): React.ReactElement => {
   return (
     <>
       <Switch>
-        <FilterLegacyRoutesRoute
+        <ChainRoute
           exact
           path={[SAFE_ROUTES.ASSETS_BASE_ROUTE, LEGACY_SAFE_ROUTES.ASSETS_BASE_ROUTE].map(
             (path) => `${path}/:assetType?`,
           )}
           render={() => wrapInSuspense(<Balances />, null)}
         />
-        <FilterLegacyRoutesRoute
+        <ChainRoute
           exact
           path={[SAFE_ROUTES.TRANSACTIONS, LEGACY_SAFE_ROUTES.TRANSACTIONS]}
           render={() => wrapInSuspense(<TxList />, null)}
         />
-        <FilterLegacyRoutesRoute
+        <ChainRoute
           exact
           path={[SAFE_ROUTES.ADDRESS_BOOK, LEGACY_SAFE_ROUTES.ADDRESS_BOOK]}
           render={() => wrapInSuspense(<AddressBookTable />, null)}
         />
-        <FilterLegacyRoutesRoute
+        <ChainRoute
           exact
           path={[SAFE_ROUTES.APPS, LEGACY_SAFE_ROUTES.APPS]}
           render={({ history }) => {
@@ -96,8 +96,7 @@ const Container = (): React.ReactElement => {
             return wrapInSuspense(<Apps />, null)
           }}
         />
-        <FilterLegacyRoutesRoute
-          exact
+        <ChainRoute
           path={[SAFE_ROUTES.SETTINGS_BASE_ROUTE, LEGACY_SAFE_ROUTES.SETTINGS_BASE_ROUTE]}
           render={() => wrapInSuspense(<Settings />, null)}
         />

@@ -13,7 +13,7 @@ import Span from 'src/components/layout/Span'
 import { currentSafeWithNames } from 'src/logic/safe/store/selectors'
 import { grantedSelector } from 'src/routes/safe/container/selector'
 import { LEGACY_SAFE_ROUTES } from 'src/routes/legacy/routes'
-import FilterLegacyRoutesRoute from 'src/routes/legacy/FilterLegacyRoutesRoute'
+import ChainRoute from 'src/routes/legacy/components/ChainRoute'
 
 const Advanced = React.lazy(() => import('./Advanced'))
 const SpendingLimitSettings = React.lazy(() => import('./SpendingLimit'))
@@ -107,27 +107,27 @@ const Settings = (): React.ReactElement => {
         <Col className={classes.contents} layout="column">
           <Block className={classes.container}>
             <Switch>
-              <FilterLegacyRoutesRoute
+              <ChainRoute
                 path={[SAFE_ROUTES.SETTINGS_DETAILS, LEGACY_SAFE_ROUTES.SETTINGS_DETAILS]}
                 exact
                 render={() => <SafeDetails />}
               />
-              <FilterLegacyRoutesRoute
+              <ChainRoute
                 path={[SAFE_ROUTES.SETTINGS_OWNERS, LEGACY_SAFE_ROUTES.SETTINGS_OWNERS]}
                 exact
                 render={() => <ManageOwners granted={granted} owners={owners} />}
               />
-              <FilterLegacyRoutesRoute
+              <ChainRoute
                 path={[SAFE_ROUTES.SETTINGS_POLICIES, LEGACY_SAFE_ROUTES.SETTINGS_POLICIES]}
                 exact
                 render={() => <ThresholdSettings />}
               />
-              <FilterLegacyRoutesRoute
+              <ChainRoute
                 path={[SAFE_ROUTES.SETTINGS_SPENDING_LIMIT, LEGACY_SAFE_ROUTES.SETTINGS_SPENDING_LIMIT]}
                 exact
                 render={() => <SpendingLimitSettings />}
               />
-              <FilterLegacyRoutesRoute
+              <ChainRoute
                 path={[SAFE_ROUTES.SETTINGS_ADVANCED, LEGACY_SAFE_ROUTES.SETTINGS_ADVANCED]}
                 exact
                 render={() => <Advanced />}

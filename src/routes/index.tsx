@@ -22,7 +22,7 @@ import {
   LEGACY_OPEN_ADDRESS,
   LEGACY_WELCOME_ADDRESS,
 } from './legacy/routes'
-import FilterLegacyRoutesRoute from './legacy/FilterLegacyRoutesRoute'
+import ChainRoute from './legacy/components/ChainRoute'
 
 const Welcome = React.lazy(() => import('./welcome/container'))
 const Open = React.lazy(() => import('./open/container/Open'))
@@ -61,7 +61,7 @@ const Routes = (): React.ReactElement => {
 
   return (
     <Switch>
-      <FilterLegacyRoutesRoute
+      <ChainRoute
         exact
         path="/"
         render={() => {
@@ -91,13 +91,10 @@ const Routes = (): React.ReactElement => {
           return <Redirect to={WELCOME_ROUTE} />
         }}
       />
-      <FilterLegacyRoutesRoute component={Welcome} exact path={[WELCOME_ROUTE, LEGACY_WELCOME_ADDRESS]} />
-      <FilterLegacyRoutesRoute component={Open} exact path={[OPEN_ROUTE, LEGACY_OPEN_ADDRESS]} />
-      <FilterLegacyRoutesRoute component={Safe} path={[BASE_SAFE_ROUTE, LEGACY_BASE_SAFE_ROUTE]} />
-      <FilterLegacyRoutesRoute
-        component={Load}
-        path={[`${LOAD_ROUTE}/:safeAddress?`, `${LEGACY_LOAD_ADDRESS}/:safeAddress?`]}
-      />
+      <ChainRoute component={Welcome} exact path={[WELCOME_ROUTE, LEGACY_WELCOME_ADDRESS]} />
+      <ChainRoute component={Open} exact path={[OPEN_ROUTE, LEGACY_OPEN_ADDRESS]} />
+      <ChainRoute component={Safe} path={[BASE_SAFE_ROUTE, LEGACY_BASE_SAFE_ROUTE]} />
+      <ChainRoute component={Load} path={[`${LOAD_ROUTE}/:safeAddress?`, `${LEGACY_LOAD_ADDRESS}/:safeAddress?`]} />
       <Redirect to="/" />
     </Switch>
   )

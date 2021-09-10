@@ -69,7 +69,7 @@ describe('<Welcome>', () => {
       },
     }
 
-    expect(window.location.href).toBe('http://localhost/')
+    expect(window.location.href).toBe(`http://localhost/`)
 
     render(<Welcome />, customState)
 
@@ -93,7 +93,7 @@ describe('<Welcome>', () => {
       },
     }
 
-    expect(window.location.href).toBe(`http://localhost/${getNetworkNameSlug()}`)
+    expect(window.location.href).toBe(`http://localhost/${getNetworkNameSlug()}/open`)
 
     render(<Welcome />, customState)
 

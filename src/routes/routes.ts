@@ -33,11 +33,11 @@ export const SAFE_ROUTES = {
 // Old URL: https://rinkeby.gnosis-safe.io/app/#/safes/0x5f9ee776B85f1aFF123f935C48C528D00a62B0ad
 // New URL: https://gnosis-safe.io/app/rinkeby/safes/0x5f9ee776B85f1aFF123f935C48C528D00a62B0ad
 export const redirectLegacyRoutes = (): void => {
-  const { hash } = window.location
-  if (!hash) return
+  if (!window.location.hash) return
 
-  // Pathname is different in staging/production
-  const pathname = window.location.href.replace(window.location.origin, '')
-  const url = `${pathname}${getNetworkNameSlug()}${hash.substr(1)}`
+  const url = window.location.href
+    .replace(window.location.origin, '') // Create pathname (differs in dev/prod)
+    .replace('#', getNetworkNameSlug()) // Add network name
+
   history.replace(url)
 }

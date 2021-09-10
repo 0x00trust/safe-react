@@ -1,7 +1,7 @@
 import { Loader } from '@gnosis.pm/safe-react-components'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { generatePath, Redirect, Switch, useLocation, useRouteMatch } from 'react-router-dom'
+import { generatePath, Redirect, Route, Switch, useLocation, useRouteMatch } from 'react-router-dom'
 
 import {
   BASE_SAFE_ROUTE,
@@ -16,13 +16,6 @@ import {
 import { LoadingContainer } from 'src/components/LoaderContainer'
 import { useAnalytics } from 'src/utils/googleAnalytics'
 import { lastViewedSafe } from 'src/logic/currentSession/store/selectors'
-import {
-  LEGACY_BASE_SAFE_ROUTE,
-  LEGACY_LOAD_ADDRESS,
-  LEGACY_OPEN_ADDRESS,
-  LEGACY_WELCOME_ADDRESS,
-} from './legacy/routes'
-import ChainRoute from './legacy/components/ChainRoute'
 
 const Welcome = React.lazy(() => import('./welcome/container'))
 const Open = React.lazy(() => import('./open/container/Open'))
@@ -61,7 +54,7 @@ const Routes = (): React.ReactElement => {
 
   return (
     <Switch>
-      <ChainRoute
+      <Route
         exact
         path="/"
         render={() => {
@@ -91,10 +84,10 @@ const Routes = (): React.ReactElement => {
           return <Redirect to={WELCOME_ROUTE} />
         }}
       />
-      <ChainRoute component={Welcome} exact path={[WELCOME_ROUTE, LEGACY_WELCOME_ADDRESS]} />
-      <ChainRoute component={Open} exact path={[OPEN_ROUTE, LEGACY_OPEN_ADDRESS]} />
-      <ChainRoute component={Safe} path={[BASE_SAFE_ROUTE, LEGACY_BASE_SAFE_ROUTE]} />
-      <ChainRoute component={Load} path={[`${LOAD_ROUTE}/:safeAddress?`, `${LEGACY_LOAD_ADDRESS}/:safeAddress?`]} />
+      <Route component={Welcome} exact path={WELCOME_ROUTE} />
+      <Route component={Open} exact path={OPEN_ROUTE} />
+      <Route component={Safe} path={BASE_SAFE_ROUTE} />
+      <Route component={Load} path={`${LOAD_ROUTE}/:safeAddress?`} />
       <Redirect to="/" />
     </Switch>
   )

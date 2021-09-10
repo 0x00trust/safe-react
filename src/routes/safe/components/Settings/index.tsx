@@ -3,7 +3,7 @@ import { LoadingContainer } from 'src/components/LoaderContainer'
 import { makeStyles } from '@material-ui/core/styles'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { generatePath, Switch, useRouteMatch } from 'react-router-dom'
+import { generatePath, Route, Switch, useRouteMatch } from 'react-router-dom'
 import { styles } from './style'
 import { SAFE_ROUTES, SAFELIST_ROUTE, getNetworkNameSlug } from 'src/routes/routes'
 import Block from 'src/components/layout/Block'
@@ -12,8 +12,6 @@ import Col from 'src/components/layout/Col'
 import Span from 'src/components/layout/Span'
 import { currentSafeWithNames } from 'src/logic/safe/store/selectors'
 import { grantedSelector } from 'src/routes/safe/container/selector'
-import { LEGACY_SAFE_ROUTES } from 'src/routes/legacy/routes'
-import ChainRoute from 'src/routes/legacy/components/ChainRoute'
 
 const Advanced = React.lazy(() => import('./Advanced'))
 const SpendingLimitSettings = React.lazy(() => import('./SpendingLimit'))
@@ -107,31 +105,15 @@ const Settings = (): React.ReactElement => {
         <Col className={classes.contents} layout="column">
           <Block className={classes.container}>
             <Switch>
-              <ChainRoute
-                path={[SAFE_ROUTES.SETTINGS_DETAILS, LEGACY_SAFE_ROUTES.SETTINGS_DETAILS]}
-                exact
-                render={() => <SafeDetails />}
-              />
-              <ChainRoute
-                path={[SAFE_ROUTES.SETTINGS_OWNERS, LEGACY_SAFE_ROUTES.SETTINGS_OWNERS]}
+              <Route path={SAFE_ROUTES.SETTINGS_DETAILS} exact render={() => <SafeDetails />} />
+              <Route
+                path={SAFE_ROUTES.SETTINGS_OWNERS}
                 exact
                 render={() => <ManageOwners granted={granted} owners={owners} />}
               />
-              <ChainRoute
-                path={[SAFE_ROUTES.SETTINGS_POLICIES, LEGACY_SAFE_ROUTES.SETTINGS_POLICIES]}
-                exact
-                render={() => <ThresholdSettings />}
-              />
-              <ChainRoute
-                path={[SAFE_ROUTES.SETTINGS_SPENDING_LIMIT, LEGACY_SAFE_ROUTES.SETTINGS_SPENDING_LIMIT]}
-                exact
-                render={() => <SpendingLimitSettings />}
-              />
-              <ChainRoute
-                path={[SAFE_ROUTES.SETTINGS_ADVANCED, LEGACY_SAFE_ROUTES.SETTINGS_ADVANCED]}
-                exact
-                render={() => <Advanced />}
-              />
+              <Route path={SAFE_ROUTES.SETTINGS_POLICIES} exact render={() => <ThresholdSettings />} />
+              <Route path={SAFE_ROUTES.SETTINGS_SPENDING_LIMIT} exact render={() => <SpendingLimitSettings />} />
+              <Route path={SAFE_ROUTES.SETTINGS_ADVANCED} exact render={() => <Advanced />} />
             </Switch>
           </Block>
         </Col>

@@ -2,6 +2,7 @@ import { createBrowserHistory } from 'history'
 import { getNetworkName } from 'src/config'
 
 export const history = createBrowserHistory()
+
 export const getNetworkNameSlug = (): string => getNetworkName().toLowerCase()
 
 export const SAFE_NETWORK_NAME_SLUG = 'networkName'
@@ -27,4 +28,12 @@ export const SAFE_ROUTES = {
   SETTINGS_POLICIES: `${BASE_SAFE_ROUTE}/settings/policies`,
   SETTINGS_SPENDING_LIMIT: `${BASE_SAFE_ROUTE}/settings/spending-limit`,
   SETTINGS_ADVANCED: `${BASE_SAFE_ROUTE}/settings/advanced`,
+}
+
+// Old URL: https://rinkeby.gnosis-safe.io/app/#/safes/0x5f9ee776B85f1aFF123f935C48C528D00a62B0ad
+// New URL: https://gnosis-safe.io/app/rinkeby/safes/0x5f9ee776B85f1aFF123f935C48C528D00a62B0ad
+export const redirectLegacyRoutes = () => {
+  const { hash } = window.location
+  if (!hash) return
+  history.replace(`/${getNetworkNameSlug()}${hash.substr(1)}`)
 }

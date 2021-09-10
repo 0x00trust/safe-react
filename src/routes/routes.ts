@@ -32,7 +32,7 @@ export const SAFE_ROUTES = {
 
 // Old URL: https://rinkeby.gnosis-safe.io/app/#/safes/0x5f9ee776B85f1aFF123f935C48C528D00a62B0ad
 // New URL: https://gnosis-safe.io/app/rinkeby/safes/0x5f9ee776B85f1aFF123f935C48C528D00a62B0ad
-export const redirectLegacyRoutes = () => {
+export const redirectLegacyRoutes = (): void => {
   const { hash, pathname } = window.location
   if (!hash) return
   const url = `${pathname}${getNetworkNameSlug()}${hash.substr(1)}`

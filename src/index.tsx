@@ -9,8 +9,9 @@ import loadSafesFromStorage from 'src/logic/safe/store/actions/loadSafesFromStor
 import { store } from 'src/store'
 import { SENTRY_DSN } from './utils/constants'
 import { disableMMAutoRefreshWarning } from './utils/mm_warnings'
+import { redirectLegacyRoutes } from './routes/routes'
 
-redirectLegacyLinks()
+redirectLegacyRoutes()
 
 disableMMAutoRefreshWarning()
 
@@ -32,7 +33,4 @@ const root = document.getElementById('root')
 
 if (root !== null) {
   ReactDOM.render(<Root />, root)
-}
-function redirectLegacyLinks() {
-  throw new Error('Function not implemented.')
 }

@@ -3,18 +3,16 @@ import { getNetworkName } from 'src/config'
 
 export const getNetworkNameSlug = (): string => getNetworkName().toLowerCase()
 
-const createHistory = () => {
-  const APP_BASENAME = 'app'
+export const getBasename = (): string => {
+  const BASENAME = '/app'
+  const devBasename = `/${getNetworkNameSlug()}${BASENAME}`
 
-  const devBasename = `/${getNetworkNameSlug()}/${APP_BASENAME}`
-  const prodBasename = `/${APP_BASENAME}`
-
-  return createBrowserHistory({
-    basename: window.location.pathname.startsWith(devBasename) ? devBasename : prodBasename,
-  })
+  return window.location.pathname.startsWith(devBasename) ? devBasename : BASENAME
 }
 
-export const history = createHistory()
+export const history = createBrowserHistory({
+  basename: getBasename(),
+})
 
 export const SAFE_NETWORK_NAME_SLUG = 'networkName'
 export const SAFE_SAFE_ADDRESS_SLUG = 'safeAddress'

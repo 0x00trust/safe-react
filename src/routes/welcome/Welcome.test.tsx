@@ -77,7 +77,7 @@ describe('<Welcome>', () => {
 
     fireEvent.click(createNewSafeLinkNode)
 
-    expect(window.location.href).toBe(`http://localhost/${getNetworkNameSlug()}/open`)
+    expect(window.location.href).toBe(`http://localhost/app/${getNetworkNameSlug()}/open`)
   })
 
   it('Add existing Safe button should redirect to /load if a wallet is already selected', () => {
@@ -93,7 +93,7 @@ describe('<Welcome>', () => {
       },
     }
 
-    expect(window.location.href).toBe(`http://localhost/${getNetworkNameSlug()}/open`)
+    expect(window.location.href).toBe(`http://localhost/app/${getNetworkNameSlug()}/open`)
 
     render(<Welcome />, customState)
 
@@ -103,6 +103,6 @@ describe('<Welcome>', () => {
 
     fireEvent.click(addExistingSafeLinkNode)
 
-    expect(window.location.href).toBe(`http://localhost/${getNetworkNameSlug()}/load`)
+    expect(window.location.href).toBe(`http://localhost/app/${getNetworkNameSlug()}/load`)
   })
 })

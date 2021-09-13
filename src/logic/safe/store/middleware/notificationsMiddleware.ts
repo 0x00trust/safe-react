@@ -138,7 +138,12 @@ const notificationsMiddleware =
           const notificationKey = `${currentSafeAddress}-update`
           const onNotificationClicked = () => {
             dispatch(closeSnackbarAction({ key: notificationKey }))
-            history.push(`/safes/${currentSafeAddress}/settings`)
+            history.push(
+              generatePath(SAFE_ROUTES.SETTINGS_BASE_ROUTE, {
+                networkName: getNetworkNameSlug(),
+                safeAddress: currentSafeAddress,
+              }),
+            )
           }
 
           if (version?.needUpdate && isUserOwner) {

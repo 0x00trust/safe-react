@@ -12,6 +12,7 @@ export const getBasename = (): string => {
 
 export const history = createBrowserHistory({
   basename: getBasename(),
+  forceRefresh: false,
 })
 
 export const SAFE_NETWORK_NAME_SLUG = 'networkName'

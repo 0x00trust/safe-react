@@ -12,9 +12,6 @@ function deploy_pull_request {
 
   # Deploy pull request
   aws s3 sync $APP_PATH s3://${REVIEW_BUCKET_NAME}/${REVIEW_FEATURE_FOLDER}/${REACT_APP_NETWORK}/app --delete
-
-  # Fallback to index.html on 404 error
-  aws s3 website s3://${REVIEW_BUCKET_NAME} --error-document ${REVIEW_FEATURE_FOLDER}/${REACT_APP_NETWORK}/app/index.html --index-document index.html
 }
 
 # Only:

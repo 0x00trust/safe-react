@@ -1,9 +1,20 @@
 import { createBrowserHistory } from 'history'
 import { getNetworkName } from 'src/config'
 
-export const history = createBrowserHistory()
-
 export const getNetworkNameSlug = (): string => getNetworkName().toLowerCase()
+
+const createHistory = () => {
+  const APP_BASENAME = 'app'
+
+  const devBasename = `/${getNetworkNameSlug()}/${APP_BASENAME}`
+  const prodBasename = `/${APP_BASENAME}`
+
+  return createBrowserHistory({
+    basename: window.location.pathname.startsWith(devBasename) ? devBasename : prodBasename,
+  })
+}
+
+export const history = createHistory()
 
 export const SAFE_NETWORK_NAME_SLUG = 'networkName'
 export const SAFE_SAFE_ADDRESS_SLUG = 'safeAddress'
@@ -33,11 +44,10 @@ export const SAFE_ROUTES = {
 // Old URL: https://rinkeby.gnosis-safe.io/app/#/safes/0x5f9ee776B85f1aFF123f935C48C528D00a62B0ad
 // New URL: https://gnosis-safe.io/app/rinkeby/safes/0x5f9ee776B85f1aFF123f935C48C528D00a62B0ad
 export const redirectLegacyRoutes = (): void => {
-  if (!window.location.hash) return
+  const { hash, pathname } = history.location
 
-  const url = window.location.href
-    .replace(window.location.origin, '') // Create pathname (differs in dev/prod)
-    .replace('#', getNetworkNameSlug()) // Add network name
+  if (!hash) return
 
+  const url = pathname + hash.replace('#', getNetworkNameSlug())
   history.replace(url)
 }

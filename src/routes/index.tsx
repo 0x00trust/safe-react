@@ -40,11 +40,15 @@ const Routes = (): React.ReactElement => {
 
   useEffect(() => {
     if (matchSafeWithAction) {
-      // prevent logging safeAddress
-      let safePage = `${SAFELIST_ROUTE}/SAFE_ADDRESS`
-      if (matchSafeWithAction.params?.safeAction) {
-        safePage += `/${matchSafeWithAction.params?.safeAction}`
-      }
+      const safePage = generatePath(SAFELIST_ROUTE, {
+        networkName: getNetworkNameSlug(),
+        // prevent logging safeAddress
+        safeAddress: 'SAFE_ADDRESS',
+        ...(matchSafeWithAction.params?.safeAction && {
+          safeAction: matchSafeWithAction.params.safeAction,
+        }),
+      })
+
       trackPage(safePage)
     } else {
       const page = `${location.pathname}${location.search}`

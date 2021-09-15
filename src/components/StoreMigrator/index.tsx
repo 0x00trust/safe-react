@@ -55,6 +55,7 @@ const StoreMigrator: React.FC = () => {
   }, [currentNetwork, dispatch])
 
   const isSingleNetworkApp = networks.some((network) => {
+    console.log(self.origin, network.safeUrl, network.safeUrl.includes(self.origin))
     return !MAINET_URL.includes(self.origin) && network.safeUrl.includes(self.origin)
   })
   // Migrate local storage

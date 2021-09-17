@@ -97,7 +97,7 @@ jobs:
         if: success() && github.event.number
         env:
           PR_NUMBER: ${{ github.event.number }}
-          REVIEW_BUCKET_NAME: ${{ secrets.AWS_REVIEW_BUCKET_NAME }}
+          REVIEW_BUCKET_NAME: ${{ secrets.AWS_PR_BUCKET_NAME }}
           REACT_APP_NETWORK: ${{ env.REACT_APP_NETWORK }}
           TRAVIS_TAG: ${{ github.event.release.tag_name }}
 

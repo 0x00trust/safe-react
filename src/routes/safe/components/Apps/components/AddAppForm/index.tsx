@@ -2,6 +2,7 @@ import { Icon, Link, Loader, Text, TextField } from '@gnosis.pm/safe-react-compo
 import React, { useState, ReactElement, useCallback, useEffect } from 'react'
 import { generatePath, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+
 import { SafeApp, StoredSafeApp } from 'src/routes/safe/components/Apps/types'
 import GnoForm from 'src/components/forms/GnoForm'
 import Img from 'src/components/layout/Img'

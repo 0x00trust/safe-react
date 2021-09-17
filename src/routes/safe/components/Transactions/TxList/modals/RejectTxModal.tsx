@@ -3,6 +3,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Close from '@material-ui/icons/Close'
 import React from 'react'
 import { useDispatch } from 'react-redux'
+
 import { useStyles } from './style'
 import Modal, { ButtonStatus, Modal as GenericModal } from 'src/components/Modal'
 import Block from 'src/components/layout/Block'
@@ -60,7 +61,7 @@ export const RejectTxModal = ({ isOpen, onClose, gwTransaction }: Props): React.
         valueInWei: '0',
         txNonce: nonce,
         origin,
-        safeTxGas: txParameters.safeTxGas ? Number(txParameters.safeTxGas) : undefined,
+        safeTxGas: txParameters.safeTxGas,
         ethParameters: txParameters,
         notifiedTransaction: TX_NOTIFICATION_TYPES.CANCELLATION_TX,
         navigateToTransactionsTab: false,

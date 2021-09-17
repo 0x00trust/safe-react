@@ -1,4 +1,4 @@
-import React, { useState, ReactElement } from 'react'
+import { useState, ReactElement, createContext } from 'react'
 import Drawer from '@material-ui/core/Drawer'
 import { useSelector } from 'react-redux'
 
@@ -13,7 +13,7 @@ import useOwnerSafes from 'src/logic/safe/hooks/useOwnerSafes'
 import AddSafeButton from 'src/components/SafeListSidebar/AddSafeButton'
 import { safeAddressFromUrl } from 'src/utils/router'
 
-export const SafeListSidebarContext = React.createContext({
+export const SafeListSidebarContext = createContext({
   isOpen: false,
   toggleSidebar: () => {},
 })

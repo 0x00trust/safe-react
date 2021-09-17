@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { ClickAwayListener, createStyles, Divider } from '@material-ui/core'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -46,7 +47,7 @@ export const EllipsisTransactionDetails = ({
   sendModalOpenHandler,
 }: EllipsisTransactionDetailsProps): React.ReactElement => {
   const classes = useStyles()
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  const [anchorEl, setAnchorEl] = useState(null)
 
   const currentSafeAddress = safeAddressFromUrl()
   const isOwnerConnected = useSelector(grantedSelector)

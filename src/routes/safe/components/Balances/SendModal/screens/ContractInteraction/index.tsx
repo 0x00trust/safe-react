@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
-import React from 'react'
+import React, { useMemo } from 'react'
 import Switch from '@material-ui/core/Switch'
+
 import { styles } from './style'
 import Divider from 'src/components/Divider'
 import GnoForm from 'src/components/forms/GnoForm'
@@ -55,7 +56,7 @@ const ContractInteraction: React.FC<ContractInteractionProps> = ({
   const safeAddress = safeAddressFromUrl()
   let setCallResults
 
-  React.useMemo(() => {
+  useMemo(() => {
     if (contractAddress) {
       initialValues.contractAddress = contractAddress
     }

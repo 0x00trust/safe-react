@@ -110,7 +110,7 @@ jobs:
           repo-token-user-login: 'github-actions[bot]'
         if: success() && github.event.number
         env:
-          REVIEW_FEATURE_URL: https://pr${{ github.event.number }}--${{ env.REPO_NAME_ALPHANUMERIC }}.review.gnosisdev.com
+          REVIEW_FEATURE_URL: https://pr${{ github.event.number }}--${{ env.REPO_NAME_ALPHANUMERIC }}.reviews-safe.gnosisdev.com
 
       # Script to deploy to the dev environment
       # Mainnet build is never created on the dev branch

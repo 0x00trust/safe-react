@@ -105,7 +105,7 @@ jobs:
         uses: mshick/add-pr-comment@v1
         with:
           message: |
-            * [Safe Multisig app ${{ env.REACT_APP_NETWORK }}](${{ env.REVIEW_FEATURE_URL }}/${{ env.REACT_APP_NETWORK }}/app/)
+            * [Safe Multisig app ${{ env.REACT_APP_NETWORK }}](${{ env.REVIEW_FEATURE_URL }}/app/)
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]'
         if: success() && github.event.number

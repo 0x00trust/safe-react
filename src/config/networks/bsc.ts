@@ -7,6 +7,7 @@ import {
   NetworkConfig,
   WALLETS,
 } from 'src/config/networks/network.d'
+import { BSC_API_KEY } from 'src/utils/constants'
 
 const baseConfig: EnvironmentSettings = {
   clientGatewayUrl: 'https://safe-client.gnosis.io/v1',
@@ -14,7 +15,7 @@ const baseConfig: EnvironmentSettings = {
   safeUrl: 'https://bsc.gnosis-safe.io/app',
   gasPriceOracles: [
     {
-      url: 'https://bscgas.info/gas',
+      url: `https://bscgas.info/gas?apikey=${BSC_API_KEY}`,
       gasParameter: 'standard',
       gweiFactor: '1e9',
     },

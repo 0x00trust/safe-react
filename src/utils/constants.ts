@@ -23,6 +23,7 @@ export const COLLECTIBLES_SOURCE = process.env.REACT_APP_COLLECTIBLES_SOURCE || 
 export const TIMEOUT = process.env.NODE_ENV === 'test' ? 1500 : 5000
 export const ETHERSCAN_API_KEY = process.env.REACT_APP_ETHERSCAN_API_KEY
 export const ETHGASSTATION_API_KEY = process.env.REACT_APP_ETHGASSTATION_API_KEY
+export const BSC_API_KEY = process.env.REACT_APP_BSC_API_KEY
 export const CONFIG_SERVICE_URL =
   process.env.CONFIG_SERVICE_URL || IS_PRODUCTION
     ? 'https://safe-config.gnosis.io/api/v1'

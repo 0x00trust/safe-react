@@ -11,7 +11,7 @@ import {
   saveTxToHistory,
   tryOffChainSigning,
 } from 'src/logic/safe/transactions'
-import { estimateSafeTxGas } from 'src/logic/safe/transactions/gas'
+import { estimateSafeTxGas, getGasParam } from 'src/logic/safe/transactions/gas'
 import * as aboutToExecuteTx from 'src/logic/safe/utils/aboutToExecuteTx'
 import { currentSafeCurrentVersion } from 'src/logic/safe/store/selectors'
 import { ZERO_ADDRESS } from 'src/logic/wallets/ethAddresses'
@@ -20,8 +20,7 @@ import { providerSelector } from 'src/logic/wallets/store/selectors'
 import enqueueSnackbar from 'src/logic/notifications/store/actions/enqueueSnackbar'
 import closeSnackbarAction from 'src/logic/notifications/store/actions/closeSnackbar'
 import { generateSafeTxHash } from 'src/logic/safe/store/actions/transactions/utils/transactionHelpers'
-import { getLastTx, getNewTxNonce, shouldExecuteTransaction } from 'src/logic/safe/store/actions/utils'
-import { getErrorMessage } from 'src/test/utils/ethereumErrors'
+import { getNewTxNonce, shouldExecuteTransaction } from 'src/logic/safe/store/actions/utils'
 import fetchTransactions from './transactions/fetchTransactions'
 import { TxArgs } from 'src/logic/safe/store/models/types/transaction'
 import { PayableTx } from 'src/types/contracts/types.d'
@@ -32,9 +31,11 @@ import { TxParameters } from 'src/routes/safe/container/hooks/useTransactionPara
 import { isTxPendingError } from 'src/logic/wallets/getWeb3'
 import { Errors, logError } from 'src/logic/exceptions/CodedException'
 import { currentChainId } from 'src/logic/config/store/selectors'
-import { generateSafeRoute, history, SAFE_ROUTES } from 'src/routes/routes'
-import { getCurrentShortChainName, getNetworkId } from 'src/config'
-import { ETHEREUM_NETWORK } from 'src/config/networks/network.d'
+import { extractShortChainName, history, SAFE_ROUTES } from 'src/routes/routes'
+import { getPrefixedSafeAddressSlug, SAFE_ADDRESS_SLUG, TRANSACTION_ID_SLUG } from 'src/routes/routes'
+import { generatePath } from 'react-router-dom'
+import { getContractErrorMessage } from 'src/logic/contracts/safeContractErrors'
+import { getLastTransaction, getLastTxNonce } from '../selectors/gatewayTransactions'
 
 export interface CreateTransactionArgs {
   navigateToTransactionsTab?: boolean
@@ -61,6 +62,16 @@ export const isKeystoneError = (err: Error): boolean => {
   return err.message.startsWith('#ktek_error')
 }
 
+const navigateToTx = (safeAddress: string, txId: string) => {
+  const prefixedSafeAddress = getPrefixedSafeAddressSlug({ shortName: extractShortChainName(), safeAddress })
+  const txRoute = generatePath(SAFE_ROUTES.TRANSACTIONS_SINGULAR, {
+    [SAFE_ADDRESS_SLUG]: prefixedSafeAddress,
+    [TRANSACTION_ID_SLUG]: txId,
+  })
+
+  history.push(txRoute)
+}
+
 export const createTransaction =
   (
     {
@@ -83,15 +94,6 @@ export const createTransaction =
   async (dispatch: Dispatch, getState: () => AppReduxState): Promise<DispatchReturn> => {
     const state = getState()
 
-    if (navigateToTransactionsTab) {
-      history.push(
-        generateSafeRoute(SAFE_ROUTES.TRANSACTIONS_QUEUE, {
-          shortName: getCurrentShortChainName(),
-          safeAddress,
-        }),
-      )
-    }
-
     const ready = await onboardUser()
     if (!ready) return
 
@@ -99,15 +101,21 @@ export const createTransaction =
     const safeVersion = currentSafeCurrentVersion(state) as string
     const safeInstance = getGnosisSafeInstanceAt(safeAddress, safeVersion)
     const chainId = currentChainId(state)
-    const lastTx = await getLastTx(safeAddress)
-    const nextNonce = await getNewTxNonce(lastTx, safeInstance)
+
+    const lastTx = getLastTransaction(state)
+    const lastTxNonce = getLastTxNonce(state)
+
+    const nextNonce = await getNewTxNonce(lastTxNonce, safeInstance)
     const nonce = txNonce !== undefined ? txNonce.toString() : nextNonce
 
     const isExecution = !delayExecution && (await shouldExecuteTransaction(safeInstance, nonce, lastTx))
     let safeTxGas = safeTxGasArg || '0'
     try {
       if (safeTxGasArg === undefined) {
-        safeTxGas = await estimateSafeTxGas({ safeAddress, txData, txRecipient: to, txAmount: valueInWei, operation })
+        safeTxGas = await estimateSafeTxGas(
+          { safeAddress, txData, txRecipient: to, txAmount: valueInWei, operation },
+          safeVersion,
+        )
       }
     } catch (error) {
       safeTxGas = safeTxGasArg || '0'
@@ -118,7 +126,7 @@ export const createTransaction =
     const beforeExecutionKey = dispatch(enqueueSnackbar(notificationsQueue.beforeExecution))
 
     let txHash
-    const txArgs: TxArgs = {
+    const txArgs: TxArgs & { sender: string } = {
       safeInstance,
       to,
       valueInWei,
@@ -142,21 +150,23 @@ export const createTransaction =
 
         if (signature) {
           dispatch(closeSnackbarAction({ key: beforeExecutionKey }))
-          dispatch(fetchTransactions(chainId, safeAddress))
+          const txDetails = await saveTxToHistory({ ...txArgs, signature, origin })
 
-          await saveTxToHistory({ ...txArgs, signature, origin })
+          dispatch(fetchTransactions(chainId, safeAddress))
+          if (navigateToTransactionsTab) {
+            navigateToTx(safeAddress, txDetails.txId)
+          }
           onUserConfirm?.(safeTxHash)
           return
         }
       }
 
       const tx = isExecution ? getExecutionTransaction(txArgs) : getApprovalTransaction(safeInstance, safeTxHash)
-      const gasParam = getNetworkId() === ETHEREUM_NETWORK.MAINNET ? 'maxFeePerGas' : 'gasPrice'
       const sendParams: PayableTx = {
         from,
         value: 0,
         gas: ethParameters?.ethGasLimit,
-        [gasParam]: ethParameters?.ethGasPriceInGWei,
+        [getGasParam()]: ethParameters?.ethGasPriceInGWei,
         nonce: ethParameters?.ethNonce,
       }
 
@@ -169,7 +179,10 @@ export const createTransaction =
           dispatch(closeSnackbarAction({ key: beforeExecutionKey }))
 
           try {
-            await saveTxToHistory({ ...txArgs, origin })
+            const txDetails = await saveTxToHistory({ ...txArgs, origin })
+            if (navigateToTransactionsTab) {
+              navigateToTx(safeAddress, txDetails.txId)
+            }
           } catch (err) {
             logError(Errors._803, err.message)
 
@@ -186,35 +199,38 @@ export const createTransaction =
         })
         .then(async (receipt) => {
           dispatch(fetchTransactions(chainId, safeAddress))
-
           return receipt.transactionHash
         })
     } catch (err) {
+      logError(Errors._803, err.message)
       onError?.()
+
+      dispatch(closeSnackbarAction({ key: beforeExecutionKey }))
+
+      const executeDataUsedSignatures = safeInstance.methods
+        .execTransaction(to, valueInWei, txData, operation, 0, 0, 0, ZERO_ADDRESS, ZERO_ADDRESS, sigs)
+        .encodeABI()
+
+      const contractErrorMessage = await getContractErrorMessage({
+        safeInstance,
+        from,
+        data: executeDataUsedSignatures,
+      })
+
+      if (contractErrorMessage) {
+        logError(Errors._803, contractErrorMessage)
+      }
 
       const notification = isTxPendingError(err)
         ? NOTIFICATIONS.TX_PENDING_MSG
         : {
             ...notificationsQueue.afterExecutionError,
-            message: `${notificationsQueue.afterExecutionError.message} - ${err.message}`,
+            ...(contractErrorMessage && {
+              message: `${notificationsQueue.afterExecutionError.message} - ${contractErrorMessage}`,
+            }),
           }
 
-      dispatch(closeSnackbarAction({ key: beforeExecutionKey }))
       dispatch(enqueueSnackbar({ key: err.code, ...notification }))
-
-      logError(Errors._803, err.message)
-
-      if (err.code !== METAMASK_REJECT_CONFIRM_TX_ERROR_CODE) {
-        const executeDataUsedSignatures = safeInstance.methods
-          .execTransaction(to, valueInWei, txData, operation, 0, 0, 0, ZERO_ADDRESS, ZERO_ADDRESS, sigs)
-          .encodeABI()
-        try {
-          const errMsg = await getErrorMessage(safeInstance.options.address, 0, executeDataUsedSignatures, from)
-          logError(Errors._803, errMsg)
-        } catch (e) {
-          logError(Errors._803, e.message)
-        }
-      }
     }
 
     return txHash

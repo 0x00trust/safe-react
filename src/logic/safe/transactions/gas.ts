@@ -7,6 +7,8 @@ import { generateSignaturesFromTxConfirmations } from 'src/logic/safe/safeTxSign
 import { fetchSafeTxGasEstimation } from 'src/logic/safe/api/fetchSafeTxGasEstimation'
 import { Confirmation } from 'src/logic/safe/store/models/types/confirmation'
 import { checksumAddress } from 'src/utils/checksumAddress'
+import { hasFeature } from '../utils/safeVersion'
+import { FEATURES } from '@gnosis.pm/safe-react-gateway-sdk'
 
 type SafeTxGasEstimationProps = {
   safeAddress: string
@@ -16,13 +18,14 @@ type SafeTxGasEstimationProps = {
   operation: number
 }
 
-export const estimateSafeTxGas = async ({
-  safeAddress,
-  txData,
-  txRecipient,
-  txAmount,
-  operation,
-}: SafeTxGasEstimationProps): Promise<string> => {
+export const estimateSafeTxGas = async (
+  { safeAddress, txData, txRecipient, txAmount, operation }: SafeTxGasEstimationProps,
+  safeVersion: string,
+): Promise<string> => {
+  if (hasFeature(FEATURES.SAFE_TX_GAS_OPTIONAL, safeVersion)) {
+    return '0'
+  }
+
   try {
     const safeTxGasEstimation = await fetchSafeTxGasEstimation({
       safeAddress,
@@ -223,4 +226,8 @@ export const estimateGasForTransactionApproval = async ({
     from,
     to: safeAddress,
   })
+}
+
+export const getGasParam = (): string => {
+  return hasFeature(FEATURES.EIP1559) ? 'maxFeePerGas' : 'gasPrice'
 }

@@ -22,19 +22,19 @@ import { ADD_OR_UPDATE_SAFE } from '../actions/addOrUpdateSafe'
 import { store as reduxStore } from 'src/store/index'
 import { HistoryPayload } from 'src/logic/safe/store/reducer/gatewayTransactions'
 import { history, extractSafeAddress, generateSafeRoute, ADDRESSED_ROUTE, SAFE_ROUTES } from 'src/routes/routes'
-import { getCurrentShortChainName } from 'src/config'
+import { getShortName } from 'src/config'
 
 const watchedActions = [ADD_OR_UPDATE_SAFE, ADD_QUEUED_TRANSACTIONS, ADD_HISTORY_TRANSACTIONS]
 
 const LAST_TIME_USED_LOGGED_IN_ID = 'LAST_TIME_USED_LOGGED_IN_ID'
 
-const sendAwaitingTransactionNotification = async (
+const sendAwaitingTransactionNotification = (
   dispatch,
   safeAddress,
   awaitingTxsSubmissionDateList,
   notificationKey,
   notificationClickedCb,
-) => {
+): void => {
   if (!dispatch || !safeAddress || !awaitingTxsSubmissionDateList || !notificationKey) {
     return
   }
@@ -42,7 +42,7 @@ const sendAwaitingTransactionNotification = async (
     return
   }
 
-  let lastTimeUserLoggedInForSafes = (await loadFromStorage<Record<string, string>>(LAST_TIME_USED_LOGGED_IN_ID)) || {}
+  let lastTimeUserLoggedInForSafes = loadFromStorage<Record<string, string>>(LAST_TIME_USED_LOGGED_IN_ID) || {}
   const lastTimeUserLoggedIn = lastTimeUserLoggedInForSafes[safeAddress]
     ? lastTimeUserLoggedInForSafes[safeAddress]
     : null
@@ -63,7 +63,7 @@ const sendAwaitingTransactionNotification = async (
     ...lastTimeUserLoggedInForSafes,
     [safeAddress]: new Date(),
   }
-  await saveToStorage(LAST_TIME_USED_LOGGED_IN_ID, lastTimeUserLoggedInForSafes)
+  saveToStorage(LAST_TIME_USED_LOGGED_IN_ID, lastTimeUserLoggedInForSafes)
 }
 
 // any/AnyAction used as our Redux state is not typed
@@ -115,13 +115,13 @@ const notificationsMiddleware =
             dispatch(closeSnackbarAction({ key: notificationKey }))
             history.push(
               generateSafeRoute(SAFE_ROUTES.TRANSACTIONS_HISTORY, {
-                shortName: getCurrentShortChainName(),
+                shortName: getShortName(),
                 safeAddress,
               }),
             )
           }
 
-          await sendAwaitingTransactionNotification(
+          sendAwaitingTransactionNotification(
             dispatch,
             safeAddress,
             awaitingTxsSubmissionDateList,
@@ -146,7 +146,7 @@ const notificationsMiddleware =
             dispatch(closeSnackbarAction({ key: notificationKey }))
             history.push(
               generateSafeRoute(ADDRESSED_ROUTE, {
-                shortName: getCurrentShortChainName(),
+                shortName: getShortName(),
                 safeAddress: currentSafeAddress,
               }),
             )

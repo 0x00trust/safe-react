@@ -116,12 +116,12 @@
         "operaTouch",
         "portis",
         "torus",
-        "trezor",
         "trust",
         "walletLink"
       ],
       "features": [
         "CONTRACT_INTERACTION",
+        "EIP1559",
         "ERC721",
         "SAFE_APPS",
         "SAFE_TX_GAS_OPTIONAL"

@@ -1,18 +1,18 @@
 import { _getChainId } from 'src/config'
-import { ChainId, CHAIN_ID } from 'src/config/chain.d'
+import { ChainId } from 'src/config/chain.d'
 import Storage from './Storage'
 
 // Legacy storage keys. New chains will use the chain id as prefix.
 // @TODO: migrate them to chain ids.
 const STORAGE_KEYS: Record<ChainId, string> = {
-  [CHAIN_ID.ETHEREUM]: 'MAINNET',
-  [CHAIN_ID.RINKEBY]: 'RINKEBY',
-  [CHAIN_ID.BSC]: 'BSC',
-  [CHAIN_ID.XDAI]: 'XDAI',
-  [CHAIN_ID.POLYGON]: 'POLYGON',
-  [CHAIN_ID.ENERGY_WEB_CHAIN]: 'ENERGY_WEB_CHAIN',
-  [CHAIN_ID.ARBITRUM]: 'ARBITRUM',
-  [CHAIN_ID.VOLTA]: 'VOLTA',
+  '1': 'MAINNET',
+  '4': 'RINKEBY',
+  '56': 'BSC',
+  '100': 'XDAI',
+  '137': 'POLYGON',
+  '246': 'ENERGY_WEB_CHAIN',
+  '42161': 'ARBITRUM',
+  '73799': 'VOLTA',
 }
 
 export const storage = new Storage(window.localStorage, '')
@@ -36,7 +36,10 @@ export const removeFromStorage = (key: string): void => {
   storage.removeItem(`${getStoragePrefix()}${key}`)
 }
 
-// This function is only meant to be used in L2-UX migration to gather information from other networks
-export const saveMigratedKeyToStorage = async <T = unknown>(key: string, value: T): Promise<void> => {
-  storage.setItem(`_immortal|${key}`, value)
+export const saveToStorageWithExpiry = <T = unknown>(key: string, value: T, expiry: number): void => {
+  storage.setWithExpiry<T>(key, value, expiry)
+}
+
+export const loadFromStorageWithExpiry = <T = unknown>(key: string): T | undefined => {
+  return storage.getWithExpiry<T>(key)
 }

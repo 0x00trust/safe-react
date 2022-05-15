@@ -15,11 +15,11 @@ import { ReviewReplaceOwnerModal } from 'src/routes/safe/components/Settings/Man
 import { TxParameters } from 'src/routes/safe/container/hooks/useTransactionParameters'
 import { isValidAddress } from 'src/utils/isValidAddress'
 import { OwnerData } from 'src/routes/safe/components/Settings/ManageOwners/dataFetcher'
-import { extractSafeAddress } from 'src/routes/routes'
 import { getSafeSDK } from 'src/logic/wallets/getWeb3'
 import { Errors, logError } from 'src/logic/exceptions/CodedException'
 import { currentSafeCurrentVersion } from 'src/logic/safe/store/selectors'
 import { _getChainId } from 'src/config'
+import useSafeAddress from 'src/logic/currentSession/hooks/useSafeAddress'
 
 export type OwnerValues = {
   address: string
@@ -34,6 +34,7 @@ export const sendReplaceOwner = async (
   dispatch: Dispatch,
   txParameters: TxParameters,
   connectedWalletAddress: string,
+  delayExecution: boolean,
 ): Promise<void> => {
   const sdk = await getSafeSDK(connectedWalletAddress, safeAddress, safeVersion)
   const safeTx = await sdk.getSwapOwnerTx(
@@ -42,7 +43,7 @@ export const sendReplaceOwner = async (
   )
   const txData = safeTx.data.data
 
-  const txHash = await dispatch(
+  await dispatch(
     createTransaction({
       safeAddress,
       to: safeAddress,
@@ -52,13 +53,9 @@ export const sendReplaceOwner = async (
       safeTxGas: txParameters.safeTxGas,
       ethParameters: txParameters,
       notifiedTransaction: TX_NOTIFICATION_TYPES.SETTINGS_CHANGE_TX,
+      delayExecution,
     }),
   )
-
-  if (txHash) {
-    // update the AB
-    dispatch(addressBookAddOrUpdate(makeAddressBookEntry({ ...newOwner, chainId: _getChainId() })))
-  }
 }
 
 type ReplaceOwnerProps = {
@@ -71,7 +68,7 @@ export const ReplaceOwnerModal = ({ isOpen, onClose, owner }: ReplaceOwnerProps)
   const [activeScreen, setActiveScreen] = useState('checkOwner')
   const [newOwner, setNewOwner] = useState({ address: '', name: '' })
   const dispatch = useDispatch()
-  const safeAddress = extractSafeAddress()
+  const { safeAddress } = useSafeAddress()
   const safeVersion = useSelector(currentSafeCurrentVersion)
   const connectedWalletAddress = useSelector(userAccountSelector)
 
@@ -95,7 +92,7 @@ export const ReplaceOwnerModal = ({ isOpen, onClose, owner }: ReplaceOwnerProps)
     }
   }
 
-  const onReplaceOwner = async (txParameters: TxParameters) => {
+  const onReplaceOwner = async (txParameters: TxParameters, delayExecution: boolean) => {
     onClose()
 
     try {
@@ -107,6 +104,7 @@ export const ReplaceOwnerModal = ({ isOpen, onClose, owner }: ReplaceOwnerProps)
         dispatch,
         txParameters,
         connectedWalletAddress,
+        delayExecution,
       )
       dispatch(addressBookAddOrUpdate(makeAddressBookEntry({ ...newOwner, chainId: _getChainId() })))
     } catch (error) {

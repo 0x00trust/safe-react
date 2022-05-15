@@ -1,5 +1,4 @@
 import ClickAwayListener from '@material-ui/core/ClickAwayListener'
-import Grow from '@material-ui/core/Grow'
 import List from '@material-ui/core/List'
 import Popper from '@material-ui/core/Popper'
 import { withStyles } from '@material-ui/core/styles'
@@ -14,11 +13,13 @@ import Row from 'src/components/layout/Row'
 import { headerHeight, md, screenSm, sm } from 'src/theme/variables'
 import { useStateHandler } from 'src/logic/hooks/useStateHandler'
 import SafeLogo from '../assets/gnosis-safe-multisig-logo.svg'
-import { WELCOME_ROUTE } from 'src/routes/routes'
+import { ROOT_ROUTE } from 'src/routes/routes'
 import WalletSwitch from 'src/components/WalletSwitch'
 import Divider from 'src/components/layout/Divider'
 import { shouldSwitchWalletChain } from 'src/logic/wallets/store/selectors'
 import { useSelector } from 'react-redux'
+import { OVERVIEW_EVENTS } from 'src/utils/events/overview'
+import Track from 'src/components/Track'
 
 const styles = () => ({
   root: {
@@ -68,25 +69,22 @@ const styles = () => ({
 })
 
 const WalletPopup = ({ anchorEl, providerDetails, classes, open, onClose }) => {
+  if (!open) {
+    return null
+  }
   return (
     <Popper
       anchorEl={anchorEl}
       className={classes.popper}
-      open={open}
+      open
       placement="bottom"
       popperOptions={{ positionFixed: true }}
     >
-      {({ TransitionProps }) => (
-        <Grow {...TransitionProps}>
-          <>
-            <ClickAwayListener mouseEvent="onClick" onClickAway={onClose} touchEvent={false}>
-              <List className={classes.root} component="div">
-                {providerDetails}
-              </List>
-            </ClickAwayListener>
-          </>
-        </Grow>
-      )}
+      <ClickAwayListener mouseEvent="onClick" onClickAway={onClose} touchEvent={false}>
+        <List className={classes.root} component="div">
+          {providerDetails}
+        </List>
+      </ClickAwayListener>
     </Popper>
   )
 }
@@ -99,9 +97,11 @@ const Layout = ({ classes, providerDetails, providerInfo }) => {
   return (
     <Row className={classes.summary}>
       <Col className={classes.logo} middle="xs" start="xs">
-        <Link to={WELCOME_ROUTE}>
-          <Img alt="Gnosis Safe" height={36} src={SafeLogo} testId="heading-gnosis-logo" />
-        </Link>
+        <Track {...OVERVIEW_EVENTS.HOME}>
+          <Link to={ROOT_ROUTE}>
+            <Img alt="Gnosis Safe" height={36} src={SafeLogo} testId="heading-gnosis-logo" id="safe-logo" />
+          </Link>
+        </Track>
       </Col>
 
       <Spacer />
@@ -113,6 +113,7 @@ const Layout = ({ classes, providerDetails, providerInfo }) => {
         </div>
       )}
 
+      <Divider />
       <Provider
         info={providerInfo}
         open={open}
@@ -129,6 +130,7 @@ const Layout = ({ classes, providerDetails, providerInfo }) => {
           )
         }
       />
+      <Divider />
 
       <NetworkSelector open={openNetworks} toggle={toggleNetworks} clickAway={clickAwayNetworks} />
     </Row>

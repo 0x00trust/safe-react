@@ -27,6 +27,7 @@ enum NOTIFICATION_IDS {
   TX_CANCELLATION_EXECUTED_MSG,
   TX_FAILED_MSG,
   TX_PENDING_MSG,
+  TX_PENDING_FAILED_MSG,
   TX_WAITING_MSG,
   TX_CONFIRMATION_EXECUTED_MSG,
   TX_CONFIRMATION_FAILED_MSG,
@@ -56,6 +57,7 @@ enum NOTIFICATION_IDS {
   ADDRESS_BOOK_EXPORT_ENTRIES_SUCCESS,
   ADDRESS_BOOK_EXPORT_ENTRIES_ERROR,
   SAFE_NEW_VERSION_AVAILABLE,
+  SHARE_SAFE_APP_URL_COPIED,
 }
 
 export const NOTIFICATIONS: Record<NotificationId, Notification> = {
@@ -96,6 +98,10 @@ export const NOTIFICATIONS: Record<NotificationId, Notification> = {
   },
   TX_PENDING_MSG: {
     message: 'Transaction still pending. Consider resubmitting with a higher gas price.',
+    options: { variant: ERROR, persist: true, autoHideDuration: shortDuration },
+  },
+  TX_PENDING_FAILED_MSG: {
+    message: 'Transaction wasn’t mined, please make sure it was properly sent. Be aware that it might still be mined.',
     options: { variant: ERROR, persist: true, autoHideDuration: shortDuration },
   },
   TX_WAITING_MSG: {
@@ -232,5 +238,11 @@ export const NOTIFICATIONS: Record<NotificationId, Notification> = {
   SAFE_NEW_VERSION_AVAILABLE: {
     message: 'There is a new version available for this Safe. Update now!',
     options: { variant: WARNING, persist: false, preventDuplicate: true },
+  },
+
+  // Copy to clipboard
+  SHARE_SAFE_APP_URL_COPIED: {
+    message: 'Safe App URL copied to clipboard!',
+    options: { variant: INFO, persist: false, preventDuplicate: true },
   },
 }

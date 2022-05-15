@@ -8,7 +8,6 @@ import {
 } from '@gnosis.pm/safe-react-gateway-sdk'
 
 import {
-  GATEWAY_URL,
   DEFAULT_CHAIN_ID,
   ETHERSCAN_API_KEY,
   INFURA_TOKEN,
@@ -70,8 +69,7 @@ const formatRpcServiceUrl = ({ authentication, value }: RpcUri, TOKEN: string): 
   return needsToken ? `${value}${TOKEN}` : value
 }
 
-export const getRpcServiceUrl = (): string => {
-  const { rpcUri } = getChainInfo()
+export const getRpcServiceUrl = (rpcUri = getChainInfo().rpcUri): string => {
   return formatRpcServiceUrl(rpcUri, INFURA_TOKEN)
 }
 

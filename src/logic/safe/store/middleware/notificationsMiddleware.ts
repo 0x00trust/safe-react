@@ -21,10 +21,8 @@ import { loadFromStorage, saveToStorage } from 'src/utils/storage'
 import { ADD_OR_UPDATE_SAFE } from '../actions/addOrUpdateSafe'
 import { store as reduxStore } from 'src/store/index'
 import { HistoryPayload } from 'src/logic/safe/store/reducer/gatewayTransactions'
-import { history, extractSafeAddress, generateSafeRoute, ADDRESSED_ROUTE, SAFE_ROUTES } from 'src/routes/routes'
-import { getShortName } from 'src/config'
-import { getLocalTxStatus, localStatuses } from '../selectors/txStatus'
-import { currentChainId } from 'src/logic/config/store/selectors'
+import { history, generateSafeRoute, ADDRESSED_ROUTE, SAFE_ROUTES } from 'src/routes/routes'
+import { isTxPending } from 'src/logic/safe/store/selectors/pendingTransactions'
 
 const watchedActions = [ADD_OR_UPDATE_SAFE, ADD_QUEUED_TRANSACTIONS, ADD_HISTORY_TRANSACTIONS]
 
@@ -79,6 +77,8 @@ const notificationsMiddleware =
     if (watchedActions.includes(action.type)) {
       const state = store.getState()
 
+      const { currentShortName, currentSafeAddress } = state.currentSession
+
       switch (action.type) {
         case ADD_HISTORY_TRANSACTIONS: {
           const userAddress: string = userAccountSelector(state)
@@ -107,14 +107,10 @@ const notificationsMiddleware =
           const safesMap = safesAsMap(state)
           const currentSafe = safesMap.get(safeAddress)
 
-          const hasLocalStatus = transactions.some((tx) => {
-            // Check if the local status is different from the backend status
-            const status = getLocalTxStatus(localStatuses(state), currentChainId(state), tx)
-            return status !== tx.txStatus
-          })
+          const hasPendingTx = transactions.some(({ id }) => isTxPending(state, id))
 
           if (
-            hasLocalStatus ||
+            hasPendingTx ||
             !currentSafe ||
             !isUserAnOwner(currentSafe, userAddress) ||
             awaitingTransactions.length === 0
@@ -128,7 +124,7 @@ const notificationsMiddleware =
             dispatch(closeSnackbarAction({ key: notificationKey }))
             history.push(
               generateSafeRoute(SAFE_ROUTES.TRANSACTIONS_HISTORY, {
-                shortName: getShortName(),
+                shortName: currentShortName,
                 safeAddress,
               }),
             )
@@ -145,22 +141,21 @@ const notificationsMiddleware =
           break
         }
         case ADD_OR_UPDATE_SAFE: {
-          const state = store.getState()
           const safe = action.payload
-          const currentSafeAddress = extractSafeAddress() || safe.address
-          if (!currentSafeAddress || !safe.currentVersion) {
+          const curSafeAddress = currentSafeAddress || safe.address
+          if (!curSafeAddress || !safe.currentVersion) {
             break
           }
           const isUserOwner = grantedSelector(state)
           const version = await getSafeVersionInfo(safe.currentVersion)
 
-          const notificationKey = `${currentSafeAddress}-update`
+          const notificationKey = `${curSafeAddress}-update`
           const onNotificationClicked = () => {
             dispatch(closeSnackbarAction({ key: notificationKey }))
             history.push(
               generateSafeRoute(ADDRESSED_ROUTE, {
-                shortName: getShortName(),
-                safeAddress: currentSafeAddress,
+                shortName: currentShortName,
+                safeAddress: curSafeAddress,
               }),
             )
           }

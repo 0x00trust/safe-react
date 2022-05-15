@@ -5,6 +5,8 @@ import styled from 'styled-components'
 
 import {
   ExpandedTxDetails,
+  isCustomTxInfo,
+  isModuleExecutionInfo,
   isMultiSendTxInfo,
   isMultiSigExecutionDetails,
   isSettingsChangeTxInfo,
@@ -21,17 +23,23 @@ import { TxLocationContext } from './TxLocationProvider'
 import { TxOwners } from './TxOwners'
 import { TxSummary } from './TxSummary'
 import { isCancelTxDetails, NOT_AVAILABLE } from './utils'
-import { useTransactionActions } from './hooks/useTransactionActions'
-import useLocalTxStatus from 'src/logic/hooks/useLocalTxStatus'
+import useTxStatus from 'src/logic/hooks/useTxStatus'
+import { useSelector } from 'react-redux'
+import { userAccountSelector } from 'src/logic/wallets/store/selectors'
+import TxModuleInfo from './TxModuleInfo'
+import Track from 'src/components/Track'
+import { TX_LIST_EVENTS } from 'src/utils/events/txList'
+import TxShareButton from './TxShareButton'
 
 const NormalBreakingText = styled(Text)`
   line-break: normal;
   word-break: normal;
+  padding-right: 32px;
 `
 
 const TxDataGroup = ({ txDetails }: { txDetails: ExpandedTxDetails }): ReactElement | null => {
   if (isTransferTxInfo(txDetails.txInfo) || isSettingsChangeTxInfo(txDetails.txInfo)) {
-    return <TxInfo txInfo={txDetails.txInfo} />
+    return <TxInfo txInfo={txDetails.txInfo} txStatus={txDetails.txStatus} />
   }
 
   if (isCancelTxDetails(txDetails.txInfo) && isMultiSigExecutionDetails(txDetails.detailedExecutionInfo)) {
@@ -85,13 +93,28 @@ type TxDetailsProps = {
 
 export const TxDetails = ({ transaction }: TxDetailsProps): ReactElement => {
   const { txLocation } = useContext(TxLocationContext)
-  const { data, loading } = useTransactionDetails(transaction.id)
-  const txStatus = useLocalTxStatus(transaction)
+  const { data, loading } = useTransactionDetails(transaction.id, transaction.txDetails)
+  const txStatus = useTxStatus(transaction)
   const willBeReplaced = txStatus === LocalTransactionStatus.WILL_BE_REPLACED
   const isPending = txStatus === LocalTransactionStatus.PENDING
-  const { canExecute, canCancel } = useTransactionActions(transaction)
+  const currentUser = useSelector(userAccountSelector)
+  const isMultiSend = data && isMultiSendTxInfo(data.txInfo)
+  const shouldShowStepper = data?.detailedExecutionInfo && isMultiSigExecutionDetails(data.detailedExecutionInfo)
 
-  if (loading) {
+  // To avoid prop drilling into TxDataGroup, module details are positioned here accordingly
+  const getModuleDetails = () => {
+    if (!data || !isModuleExecutionInfo(data.detailedExecutionInfo)) {
+      return null
+    }
+
+    return (
+      <div className="tx-module">
+        <TxModuleInfo detailedExecutionInfo={data?.detailedExecutionInfo} />
+      </div>
+    )
+  }
+
+  if (loading && !data) {
     return (
       <Centered padding={10}>
         <Loader size="sm" />
@@ -109,30 +132,73 @@ export const TxDetails = ({ transaction }: TxDetailsProps): ReactElement => {
     )
   }
 
+  const TrackedShareButton = () => {
+    return (
+      <div className="tx-share">
+        <Track {...TX_LIST_EVENTS.COPY_DEEPLINK}>
+          <TxShareButton txId={data.txId} />
+        </Track>
+      </div>
+    )
+  }
+
+  const customTxNoData = isCustomTxInfo(data.txInfo) && !data.txInfo.methodName && !parseInt(data.txInfo.dataSize, 10)
+  const onChainRejection = isCancelTxDetails(data.txInfo) && isMultiSigExecutionDetails(data.detailedExecutionInfo)
+  const noTxDataBlock = customTxNoData && !onChainRejection
+  const txData = () =>
+    isMultiSend ? (
+      <>
+        <div className={cn('tx-summary', { 'will-be-replaced': willBeReplaced })}>
+          <TrackedShareButton />
+          <TxSummary txDetails={data} />
+        </div>
+        {getModuleDetails()}
+        <div
+          className={cn('tx-details', {
+            'no-padding': isMultiSendTxInfo(data.txInfo),
+            'not-executed': !data.executedAt,
+            'will-be-replaced': willBeReplaced,
+          })}
+        >
+          <TxDataGroup txDetails={data} />
+        </div>
+      </>
+    ) : (
+      <>
+        <div
+          className={cn('tx-details', {
+            'no-padding': isMultiSendTxInfo(data.txInfo) || noTxDataBlock,
+            'not-executed': !data.executedAt,
+            'will-be-replaced': willBeReplaced,
+          })}
+        >
+          <TrackedShareButton />
+          <TxDataGroup txDetails={data} />
+        </div>
+        {getModuleDetails()}
+        <div className={cn('tx-summary', { 'will-be-replaced': willBeReplaced })}>
+          <TxSummary txDetails={data} />
+        </div>
+      </>
+    )
+
   return (
     <TxDetailsContainer>
-      <div className={cn('tx-summary', { 'will-be-replaced': willBeReplaced })}>
-        <TxSummary txDetails={data} />
-      </div>
-      <div
-        className={cn('tx-details', {
-          'no-padding': isMultiSendTxInfo(data.txInfo),
-          'not-executed': !data.executedAt,
-          'will-be-replaced': willBeReplaced,
-        })}
-      >
-        <TxDataGroup txDetails={data} />
-      </div>
-      <div
-        className={cn('tx-owners', {
-          'will-be-replaced': willBeReplaced,
-        })}
-      >
-        <TxOwners txDetails={data} isPending={isPending} />
-      </div>
-      {!isPending && !data.executedAt && txLocation !== 'history' && (canExecute || canCancel) && (
-        <div className={cn('tx-details-actions', { 'will-be-replaced': willBeReplaced })}>
-          <TxExpandedActions transaction={transaction} />
+      <div className={cn('tx-data', { 'no-owners': !shouldShowStepper, 'no-data': noTxDataBlock })}>{txData()}</div>
+      {shouldShowStepper && (
+        <div>
+          <div
+            className={cn('tx-owners', {
+              'will-be-replaced': willBeReplaced,
+            })}
+          >
+            <TxOwners txDetails={data} isPending={isPending} />
+          </div>
+          {!isPending && !data.executedAt && txLocation !== 'history' && !!currentUser && (
+            <div className={cn('tx-details-actions', { 'will-be-replaced': willBeReplaced })}>
+              <TxExpandedActions transaction={transaction} />
+            </div>
+          )}
         </div>
       )}
     </TxDetailsContainer>

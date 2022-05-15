@@ -15,7 +15,9 @@ import { TxHoverContext } from 'src/routes/safe/components/Transactions/TxList/T
 import { TxLocationContext } from 'src/routes/safe/components/Transactions/TxList/TxLocationProvider'
 import enqueueSnackbar from 'src/logic/notifications/store/actions/enqueueSnackbar'
 import { NOTIFICATIONS } from 'src/logic/notifications'
-import useLocalTxStatus from 'src/logic/hooks/useLocalTxStatus'
+import useTxStatus from 'src/logic/hooks/useTxStatus'
+import { trackEvent } from 'src/utils/googleTagManager'
+import { TX_LIST_EVENTS } from 'src/utils/events/txList'
 
 type ActionButtonsHandlers = {
   canCancel: boolean
@@ -31,10 +33,10 @@ export const useActionButtonsHandlers = (transaction: Transaction): ActionButton
   const currentUser = useSelector(userAccountSelector)
   const actionContext = useRef(useContext(TransactionActionStateContext))
   const hoverContext = useRef(useContext(TxHoverContext))
-  const locationContext = useRef(useContext(TxLocationContext))
+  const locationContext = useContext(TxLocationContext)
   const dispatch = useDispatch()
   const { canCancel, canConfirmThenExecute, canExecute } = useTransactionActions(transaction)
-  const txStatus = useLocalTxStatus(transaction)
+  const txStatus = useTxStatus(transaction)
   const isPending = txStatus === LocalTransactionStatus.PENDING
 
   const handleConfirmButtonClick = useCallback(
@@ -50,8 +52,12 @@ export const useActionButtonsHandlers = (transaction: Transaction): ActionButton
           return
         }
       }
+      const actionSelected = canExecute || canConfirmThenExecute ? 'execute' : 'confirm'
+
+      trackEvent(TX_LIST_EVENTS[actionSelected.toUpperCase()])
+
       actionContext.current.selectAction({
-        actionSelected: canExecute || canConfirmThenExecute ? 'execute' : 'confirm',
+        actionSelected,
         transactionId: transaction.id,
       })
     },
@@ -61,6 +67,9 @@ export const useActionButtonsHandlers = (transaction: Transaction): ActionButton
   const handleCancelButtonClick = useCallback(
     (event: ReactMouseEvent<HTMLButtonElement, MouseEvent>) => {
       event.stopPropagation()
+
+      trackEvent(TX_LIST_EVENTS.REJECT)
+
       actionContext.current.selectAction({
         actionSelected: 'cancel',
         transactionId: transaction.id,
@@ -86,8 +95,7 @@ export const useActionButtonsHandlers = (transaction: Transaction): ActionButton
   const disabledActions =
     !currentUser ||
     isPending ||
-    (txStatus === LocalTransactionStatus.AWAITING_EXECUTION &&
-      locationContext.current.txLocation === 'queued.queued') ||
+    (txStatus === LocalTransactionStatus.AWAITING_EXECUTION && locationContext.txLocation === 'queued.queued') ||
     (txStatus === LocalTransactionStatus.AWAITING_CONFIRMATIONS && !signaturePending(currentUser))
 
   return {

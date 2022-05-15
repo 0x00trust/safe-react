@@ -24,12 +24,13 @@ import { TokenTransferAmount } from './TokenTransferAmount'
 import { TxsInfiniteScrollContext } from './TxsInfiniteScroll'
 import { TxLocationContext } from './TxLocationProvider'
 import { CalculatedVotes } from './TxQueueCollapsed'
-import { getTxTo, isCancelTxDetails } from './utils'
+import { getTxTo, isAwaitingExecution } from './utils'
 import { userAccountSelector } from 'src/logic/wallets/store/selectors'
 import { useKnownAddress } from './hooks/useKnownAddress'
-import useLocalTxStatus from 'src/logic/hooks/useLocalTxStatus'
+import useTxStatus from 'src/logic/hooks/useTxStatus'
+import Spacer from 'src/components/Spacer'
 
-const TxInfo = ({ info, name }: { info: AssetInfo; name?: string }) => {
+export const TxInfo = ({ info, name }: { info: AssetInfo; name?: string }): ReactElement | null => {
   if (isTokenTransferAsset(info)) {
     return <TokenTransferAmount assetInfo={info} />
   }
@@ -44,7 +45,9 @@ const TxInfo = ({ info, name }: { info: AssetInfo; name?: string }) => {
       case 'SWAP_OWNER':
       case 'CHANGE_THRESHOLD':
       case 'CHANGE_IMPLEMENTATION':
-        break
+      case 'SET_GUARD':
+      case 'DELETE_GUARD':
+        return <Spacer />
       case 'ENABLE_MODULE':
       case 'DISABLE_MODULE':
         return (
@@ -119,12 +122,9 @@ export const TxCollapsed = ({
   const userAddress = useSelector(userAccountSelector)
   const toAddress = getTxTo(transaction)
   const toInfo = useKnownAddress(toAddress)
-  const txStatus = useLocalTxStatus(transaction)
+  const txStatus = useTxStatus(transaction)
   const isPending = txStatus === LocalTransactionStatus.PENDING
   const willBeReplaced = txStatus === LocalTransactionStatus.WILL_BE_REPLACED ? ' will-be-replaced' : ''
-
-  const onChainRejection =
-    isCancelTxDetails(transaction.txInfo) && txLocation !== 'history' ? ' on-chain-rejection' : ''
 
   const txCollapsedNonce = (
     <div className={'tx-nonce' + willBeReplaced}>
@@ -133,7 +133,7 @@ export const TxCollapsed = ({
   )
 
   const txCollapsedType = (
-    <div className={'tx-type' + willBeReplaced + onChainRejection}>
+    <div className={'tx-type' + willBeReplaced}>
       <CustomIconText
         address={toAddress?.value || '0x'}
         iconUrl={type.icon || toInfo?.logoUri || undefined}
@@ -189,8 +189,7 @@ export const TxCollapsed = ({
           <Loader size="xs" color="pending" />
         </CircularProgressPainter>
       ) : (
-        (txStatus === LocalTransactionStatus.AWAITING_EXECUTION ||
-          txStatus === LocalTransactionStatus.AWAITING_CONFIRMATIONS) && <SmallDot color={status.color} />
+        isAwaitingExecution(txStatus) && <SmallDot color={status.color} />
       )}
       <Text size="md" color={status.color} className="col" strong>
         {status.text}

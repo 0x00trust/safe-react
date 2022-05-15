@@ -2,17 +2,19 @@ import {
   generateSafeRoute,
   generatePrefixedAddressRoutes,
   getPrefixedSafeAddressSlug,
-  hasPrefixedSafeAddressInUrl,
   SAFE_ROUTES,
   WELCOME_ROUTE,
   extractPrefixedSafeAddress,
   ADDRESSED_ROUTE,
   history,
   LOAD_SPECIFIC_SAFE_ROUTE,
+  getShareSafeAppUrl,
+  SAFE_APP_LANDING_PAGE_ROUTE,
 } from './routes'
 import { Route, Switch } from 'react-router'
 import { render } from 'src/utils/test-utils'
 import { ZERO_ADDRESS } from 'src/logic/wallets/ethAddresses'
+import { PUBLIC_URL } from 'src/utils/constants'
 
 const validSafeAddress = '0xF5A2915982BC8b0dEDda9cEF79297A83081Fe88f'
 
@@ -47,7 +49,7 @@ describe('chainSpecificSafeAddressPathRegExp', () => {
 })
 
 describe('extractPrefixedSafeAddress', () => {
-  it('returns the chain-specific addresses from the url if both supplied', async () => {
+  it('returns the chain and address from the url if both supplied', async () => {
     const shortName = 'matic'
 
     const route = generateSafeRoute(SAFE_ROUTES.ASSETS_BALANCES, { shortName, safeAddress: validSafeAddress })
@@ -56,12 +58,12 @@ describe('extractPrefixedSafeAddress', () => {
     expect(extractPrefixedSafeAddress()).toStrictEqual({ shortName, safeAddress: validSafeAddress })
   })
 
-  it('returns the current chain prefix with safe address when a malformed chain is supplied', () => {
-    const route = `/fakechain:${validSafeAddress}/balances`
+  it('returns the incorrect chain prefix with safe address when an incorrect chain is supplied', () => {
+    const fakeChainShortName = 'fakechain'
+    const route = `/${fakeChainShortName}:${validSafeAddress}/balances`
     history.push(route)
 
-    // 'rin' is default dev env shortName
-    expect(extractPrefixedSafeAddress()).toStrictEqual({ shortName: 'rin', safeAddress: validSafeAddress })
+    expect(extractPrefixedSafeAddress()).toStrictEqual({ shortName: 'fakechain', safeAddress: validSafeAddress })
   })
 
   // matchPath will fail because of chainSpecificSafeAddressPathRegExp path
@@ -74,7 +76,7 @@ describe('extractPrefixedSafeAddress', () => {
     expect(extractPrefixedSafeAddress()).toStrictEqual({ shortName: 'rin', safeAddress: '' })
   })
 
-  it('returns the chain prefix with numbers in in', () => {
+  it('returns the chain prefix with zero address', () => {
     const shortName = 'eth'
 
     const route = `/${shortName}:${ZERO_ADDRESS}/balances`
@@ -95,29 +97,6 @@ describe('extractPrefixedSafeAddress', () => {
   })
 })
 
-describe('hasPrefixedSafeAddressInUrl', () => {
-  it('returns true if the chain-specific address exists in the URL', () => {
-    history.push(`/eth:${validSafeAddress}`)
-
-    expect(hasPrefixedSafeAddressInUrl()).toBe(true)
-  })
-
-  it('returns false if the chain-specific address in the URL is malformed', () => {
-    history.push(`/n0TaR3aLSHORTname:4xIOHAS89asasd`)
-
-    expect(hasPrefixedSafeAddressInUrl()).toBe(false)
-  })
-
-  it("returns false if the chain-specific address does't exist in the URL", () => {
-    history.push(WELCOME_ROUTE)
-
-    expect(hasPrefixedSafeAddressInUrl()).toBe(false)
-  })
-})
-
-// Not testing extractShortChainName or extractSafeAddress because
-// they return from { [key]: extractPrefixedSafeAddress()[key] }
-
 describe('getPrefixedSafeAddressSlug', () => {
   it('returns a chain-specific address slug with provided safeAddress/shortName', () => {
     const shortName = 'matic'
@@ -136,7 +115,7 @@ describe('getPrefixedSafeAddressSlug', () => {
     // Check for route change as function references this
     expect(history.location.pathname).toBe(route)
 
-    const slug = getPrefixedSafeAddressSlug({ safeAddress: validSafeAddress })
+    const slug = getPrefixedSafeAddressSlug({ shortName, safeAddress: validSafeAddress })
 
     expect(slug).toBe(`${shortName}:${validSafeAddress}`)
   })
@@ -152,7 +131,7 @@ describe('getPrefixedSafeAddressSlug', () => {
     // Check for route change as function references this
     expect(history.location.pathname).toBe(route)
 
-    const slug = getPrefixedSafeAddressSlug()
+    const slug = getPrefixedSafeAddressSlug({ shortName, safeAddress: fakeAddress })
 
     expect(slug).toBe(`${shortName}:${fakeAddress}`)
   })
@@ -185,5 +164,18 @@ describe('generatePrefixedAddressRoutes', () => {
     )
 
     expect(hasAllPrefixedSafeAddressesRoutes).toBe(true)
+  })
+})
+
+describe('getShareSafeAppUrl', () => {
+  it('generates the share Safe App url', () => {
+    const appUrl = 'https://my-safe-app-url'
+    const chainId = '4'
+
+    expect(getShareSafeAppUrl(appUrl, chainId)).toBe(
+      `${window.location.origin}${PUBLIC_URL}${SAFE_APP_LANDING_PAGE_ROUTE}?appUrl=${encodeURI(
+        appUrl,
+      )}&chainId=${chainId}`,
+    )
   })
 })

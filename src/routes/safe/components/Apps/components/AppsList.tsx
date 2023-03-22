@@ -89,7 +89,11 @@ const AddCustomAppLogo = styled.img`
   margin-bottom: 4px;
 `
 
-const AppsList = (): React.ReactElement => {
+type AppListProps = {
+  onRemoveApp: (appUrl: string) => void
+}
+
+const AppsList = ({ onRemoveApp }: AppListProps): React.ReactElement => {
   const { safeAddress } = useSafeAddress()
   const [appSearch, setAppSearch] = useState('')
   const { allApps, appList, removeApp, isLoading, pinnedSafeApps, togglePin, customApps, addCustomApp } = useAppList()
@@ -204,7 +208,7 @@ const AppsList = (): React.ReactElement => {
         color="secondary"
         iconSize="sm"
         iconType="info"
-        text="These are third-party apps, which means they are not owned, controlled, maintained or audited by Gnosis. Interacting with the apps is at your own risk. Any communication within the Apps is for informational purposes only and must not be construed as investment advice to engage in any transaction."
+        text="These are third-party apps, which means they are not owned, controlled, maintained or audited by Safe. Interacting with the apps is at your own risk. Any communication within the Apps is for informational purposes only and must not be construed as investment advice to engage in any transaction."
         textSize="sm"
       />
 
@@ -233,11 +237,15 @@ const AppsList = (): React.ReactElement => {
           </Modal.Body>
           <Modal.Footer>
             <Modal.Footer.Buttons
-              cancelButtonProps={{ onClick: () => setAppToRemove(null) }}
+              cancelButtonProps={{ testId: 'cancel-btn', onClick: () => setAppToRemove(null) }}
               confirmButtonProps={{
+                testId: 'confirm-btn',
                 color: 'error',
                 onClick: () => {
-                  removeApp(appToRemove.id)
+                  const url = appToRemove.url
+
+                  onRemoveApp(url)
+                  removeApp(appToRemove.id, url)
                   setAppToRemove(null)
                 },
                 text: 'Remove',

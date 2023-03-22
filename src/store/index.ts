@@ -2,7 +2,6 @@ import { applyMiddleware, CombinedState, combineReducers, compose, createStore, 
 import { save, load, LoadOptions, RLSOptions } from 'redux-localstorage-simple'
 import thunk from 'redux-thunk'
 
-import { addressBookMiddleware } from 'src/logic/addressBook/store/middleware'
 import addressBookReducer, { ADDRESS_BOOK_REDUCER_ID } from 'src/logic/addressBook/store/reducer'
 import {
   NFT_ASSETS_REDUCER_ID,
@@ -15,7 +14,10 @@ import currentSessionReducer, {
   CurrentSessionState,
   CURRENT_SESSION_REDUCER_ID,
 } from 'src/logic/currentSession/store/reducer/currentSession'
-import notificationsReducer, { NOTIFICATIONS_REDUCER_ID } from 'src/logic/notifications/store/reducer/notifications'
+import notificationsReducer, {
+  NotificationsState,
+  NOTIFICATIONS_REDUCER_ID,
+} from 'src/logic/notifications/store/notifications'
 import gatewayTransactionsReducer, {
   GatewayTransactionsState,
   GATEWAY_TRANSACTIONS_ID,
@@ -73,7 +75,6 @@ const enhancer = composeEnhancers(
     notificationsMiddleware,
     safeStorageMiddleware,
     providerMiddleware,
-    addressBookMiddleware,
     configMiddleware,
     gatewayTransactionsMiddleware,
     pendingTransactionsMiddleware,
@@ -110,7 +111,7 @@ export type AppReduxState = CombinedState<{
   [TOKEN_REDUCER_ID]: TokenState
   [GATEWAY_TRANSACTIONS_ID]: GatewayTransactionsState
   [PENDING_TRANSACTIONS_ID]: PendingTransactionsState
-  [NOTIFICATIONS_REDUCER_ID]: Map<string, Notification>
+  [NOTIFICATIONS_REDUCER_ID]: NotificationsState
   [CURRENCY_REDUCER_ID]: CurrencyValuesState
   [COOKIES_REDUCER_ID]: CookieState
   [ADDRESS_BOOK_REDUCER_ID]: AddressBookState

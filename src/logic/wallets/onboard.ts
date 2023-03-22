@@ -1,5 +1,4 @@
 import Onboard from 'bnc-onboard'
-import { WalletModule } from 'bnc-onboard/dist/src/interfaces'
 import { API, Initialization } from 'bnc-onboard/dist/src/interfaces'
 import { FEATURES } from '@gnosis.pm/safe-react-gateway-sdk'
 
@@ -7,19 +6,17 @@ import { _getChainId, getChainName } from 'src/config'
 import transactionDataCheck from 'src/logic/wallets/transactionDataCheck'
 import { getSupportedWallets } from 'src/logic/wallets/utils/walletList'
 import { ChainId, CHAIN_ID } from 'src/config/chain.d'
-import { loadFromStorageWithExpiry, removeFromStorage, saveToStorageWithExpiry } from 'src/utils/storage'
+import { loadFromStorageWithExpiry, removeFromStorageWithExpiry, saveToStorageWithExpiry } from 'src/utils/storage'
 import { store } from 'src/store'
 import updateProviderWallet from 'src/logic/wallets/store/actions/updateProviderWallet'
 import updateProviderAccount from 'src/logic/wallets/store/actions/updateProviderAccount'
 import updateProviderNetwork from 'src/logic/wallets/store/actions/updateProviderNetwork'
 import updateProviderEns from 'src/logic/wallets/store/actions/updateProviderEns'
-import closeSnackbar from 'src/logic/notifications/store/actions/closeSnackbar'
+import { closeAllNotifications } from '../notifications/store/notifications'
 import { getChains } from 'src/config/cache/chains'
 import { shouldSwitchNetwork, switchNetwork } from 'src/logic/wallets/utils/network'
 import { isPairingModule } from 'src/logic/wallets/pairing/utils'
 import { checksumAddress } from 'src/utils/checksumAddress'
-import HDWalletProvider from '@truffle/hdwallet-provider'
-import { E2E_MNEMONIC, E2E_PROVIDER_URL } from 'src/utils/constants'
 
 const LAST_USED_PROVIDER_KEY = 'SAFE__lastUsedProvider'
 
@@ -29,20 +26,12 @@ export const saveLastUsedProvider = (name: string): void => {
   saveToStorageWithExpiry(LAST_USED_PROVIDER_KEY, name, expiry)
 }
 
-const isCypressAskingForConnectedState = (): boolean => {
-  return window.Cypress && window.cypressConfig?.connected
-}
-
 export const loadLastUsedProvider = (): string | undefined => {
-  if (isCypressAskingForConnectedState()) {
-    return 'e2e-wallet'
-  }
-
   return loadFromStorageWithExpiry<string>(LAST_USED_PROVIDER_KEY)
 }
 
 export const removeLastUsedProvider = (): void => {
-  removeFromStorage(LAST_USED_PROVIDER_KEY)
+  removeFromStorageWithExpiry(LAST_USED_PROVIDER_KEY)
 }
 
 const getNetworkName = (chainId: ChainId) => {
@@ -61,25 +50,6 @@ const hasENSSupport = (chainId: ChainId): boolean => {
 
 export const BLOCK_POLLING_INTERVAL = 1000 * 60 * 60 // 1 hour
 
-const customSDKWallet: WalletModule = {
-  name: 'e2e-wallet',
-  type: 'injected',
-  wallet: async (helpers) => {
-    const { createModernProviderInterface } = helpers
-    const provider = new HDWalletProvider({
-      mnemonic: E2E_MNEMONIC,
-      providerOrUrl: E2E_PROVIDER_URL,
-    })
-
-    return {
-      provider,
-      interface: createModernProviderInterface(provider),
-    }
-  },
-  desktop: true,
-  mobile: true,
-}
-
 const getOnboard = (chainId: ChainId): API => {
   const config: Initialization = {
     networkId: parseInt(chainId, 10),
@@ -94,7 +64,7 @@ const getOnboard = (chainId: ChainId): API => {
       },
       network: (networkId) => {
         store.dispatch(updateProviderNetwork(networkId?.toString() || ''))
-        store.dispatch(closeSnackbar({ dismissAll: true }))
+        store.dispatch(closeAllNotifications())
       },
       ens: hasENSSupport(chainId)
         ? (ens) => {
@@ -103,8 +73,8 @@ const getOnboard = (chainId: ChainId): API => {
         : undefined,
     },
     walletSelect: {
-      description: 'Please select a wallet to connect to Gnosis Safe',
-      wallets: isCypressAskingForConnectedState() ? [customSDKWallet] : getSupportedWallets(chainId),
+      description: 'Please select a wallet to connect to the Safe',
+      wallets: getSupportedWallets(chainId),
     },
     walletCheck: [
       { checkName: 'derivationPath' },

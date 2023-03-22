@@ -7,16 +7,26 @@ import { getChainById } from 'src/config'
 import NetworkLabel from 'src/components/NetworkLabel/NetworkLabel'
 import { black300 } from 'src/theme/variables'
 import fallbackSafeAppLogoSvg from 'src/assets/icons/apps.svg'
+import UnknownAppWarning from 'src/routes/safe/components/Apps/components/SecurityFeedbackModal/UnknownAppWarning'
+import { useAppList } from 'src/routes/safe/components/Apps/hooks/appList/useAppList'
 
 type SafeAppDetailsTypes = {
   iconUrl: string
   name: string
   description: string
   availableChains: string[]
+  isInDefaultList: boolean
 }
 
-const SafeAppDetails = ({ iconUrl, name, description, availableChains }: SafeAppDetailsTypes): ReactElement => {
+const SafeAppDetails = ({
+  iconUrl,
+  name,
+  description,
+  availableChains,
+  isInDefaultList,
+}: SafeAppDetailsTypes): ReactElement => {
   const showAvailableChains = availableChains?.length > 0
+  const { isLoading: isSafeAppListLoading } = useAppList()
 
   return (
     <>
@@ -45,6 +55,12 @@ const SafeAppDetails = ({ iconUrl, name, description, availableChains }: SafeApp
               )
             })}
           </ChainsContainer>
+          <Separator />
+        </>
+      )}
+      {!isSafeAppListLoading && !isInDefaultList && (
+        <>
+          <UnknownAppWarning />
           <Separator />
         </>
       )}
